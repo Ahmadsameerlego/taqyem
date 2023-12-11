@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700&display=swap');
+body, #app{
+    background-color: #F9FAFE;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    direction: rtl;
+    font-family: 'Cairo', sans-serif;
+    overflow-x:hidden ;
+    min-height: 100vh;
+}
+
+@media(max-width:768px){
+    #login .login_card {
+        width: 85%;
+        height: 67%;
+        .login_options{
+            flex-direction: column;
+            .btn{
+                width: 100%;
+            }
+        }
+        .remember input {
+            width: 20px;
+            height: 4vw;
+        }
+    }
+    .nav_bar {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        width: 100%;
+        padding-right: 0px;
+    }
+    .single_card{margin: auto;}
+    .home_table{
+        width: 100%;
+        overflow: auto;
+    }
+    .home_table table{
+        min-width: 500px !important;
+    }
+    .filter_content{
+        .status{
+            flex-direction: column;
+            .form-group{
+                height: 50px !important;
+            }
+        }
+        .dates{
+            flex-direction: column;
+            .form-group{
+                margin-bottom: 10px;
+            }
+        }
+    }
+    .interactions{
+        flex-direction: column;
+        div{
+            margin-bottom: 12px;
+        }
+        button{
+            width: 100% !important;
+        }
+    }
+    .p-paginator-bottom{
+        overflow: auto;
+    }
+    .p-paginator{
+        width: 555px !important ;
+    }
+    .inter_action {
+        position: relative;
+        /* bottom: -63px; */
+        /* left: 50%; */
+        margin-top: 25px;
+        left: 0;
+    }
+    .card_order{
+        padding-left:10px !important ;
+        padding-right:10px !important ;
+    }
+    .address_order{
+        flex-direction: column;
+        .w-50{
+            width: 94% !important;
+        }
+    }
+    .m-5{
+        margin: 0 !important;
+        margin-top: 20px !important;
+    }
+    .pill{width: 100% !important;}
+    .confirm_dates{
+        flex-direction: column !important;
+    }
+    .w-75{width: 100% !important;}
+    .confirm_datable{
+        flex-direction: column !important;
+    }
+    // .settles{
+    //     flex-direction: column !important;
+    //     transform: translate(0%, 0%) !important;
+    //     a{
+    //         margin-bottom: 20px;
+    //     }
+    // }
+    .toggle_btn{
+        display: block !important;
+    }
+    #sidebar {
+        transform: translateX(100%);
+        transition: .3s all;
+        &.active{
+            transform: translateX(0%);
+            width: 220px;
+            .nav{
+                margin-right: 10px !important;
+                margin-left: 10px !important;
+                padding: 0px !important;
+    
+            }
+        }
+        
+    }
+    #content {
+        width: calc(100%);
+        margin-right:0px;
+    }
+    #header {
+        width: calc(100% );
+    }
+    .user_info {
+        width: 90%;
+    }
+    .login_options{
+        flex-direction: column;
+        width: 100% !important;
+        button{
+            width: 100% !important;
+            margin-bottom: 10px;
+        }    
+    }
+    .admin_delivering{
+        flex-direction: column !important;
+    }
+    .settles{
+        flex-direction: column !important;
+        a{
+            margin-bottom: 20px;
+        }
+    }
+}
