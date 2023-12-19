@@ -37,9 +37,16 @@ import rentSettle from '@/views/admin/rentSettle.vue';
 import singleRent from '@/views/admin/singleRent.vue';
 
 import settings from '@/views/admin/settingsView.vue';
-import notification from '@/views/admin/notificationsView.vue'
+import notification from '@/views/admin/notificationsView.vue';
+
+import rentDeliver from '@/views/admin/rentDeliver.vue'
 
 const routes = [
+  {
+    path : '/admin/rentDeliver/:id',
+    name : 'rentDeliver',
+    component  : rentDeliver
+  },
   {
     path : '/notification',
     name : 'notification',
@@ -154,7 +161,7 @@ const routes = [
     component : financial
   },
   {
-    path : '/admin/single/:id',
+    path : '/admin/single',
     name :'singleFinancial',
     component : singleFinancial
   },

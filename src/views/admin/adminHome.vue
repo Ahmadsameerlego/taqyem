@@ -11,7 +11,7 @@
             <section class="dash_card px-3 pt-4 pb-3 flex_between dark">
                 <div>
                 <h6 class="fw-bold whiteColor">الطلبات</h6>
-                <p class="whiteColor">0  طلب</p>
+                <p class="whiteColor">{{ total_orders }} طلب</p>
                 </div>
                 <div class="card_icon">
                 <img :src="require('@/assets/imgs/fi-rr-picture.png')" alt="">
@@ -22,7 +22,7 @@
             <section class="dash_card px-3 pt-4 pb-3 flex_between green">
                 <div>
                 <h6 class="fw-bold whiteColor">الايرادات</h6>
-                <p class="whiteColor">0  ريال سعودي</p>
+                <p class="whiteColor">{{ total_revenues }} ريال سعودي</p>
                 </div>
                 <div class="card_icon">
                 <img :src="require('@/assets/imgs/fi-rr-picture.png')" alt="">
@@ -33,7 +33,7 @@
             <section class="dash_card px-3 pt-4 pb-3 flex_between green">
                 <div>
                 <h6 class="fw-bold whiteColor">الارباح</h6>
-                <p class="whiteColor">0  ريال سعودي</p>
+                <p class="whiteColor">{{ total_profit }}  ريال سعودي</p>
                 </div>
                 <div class="card_icon">
                 <img :src="require('@/assets/imgs/fi-rr-picture.png')" alt="">
@@ -44,7 +44,7 @@
             <section class="dash_card px-3 pt-4 pb-3 flex_between blue">
                 <div>
                 <h6 class="fw-bold whiteColor">المبيعات المكتملة</h6>
-                <p class="whiteColor">0  مكتملة</p>
+                <p class="whiteColor">{{ completed_orders }} مكتملة</p>
                 </div>
                 <div class="card_icon">
                 <img :src="require('@/assets/imgs/fi-rr-picture.png')" alt="">
@@ -58,6 +58,22 @@
 
         <!-- chart  -->
         <section class="chart mt-4 mb-4">
+            <div class="d-flex justify-content-end">
+                <div>
+                    <label for="yearSelect">اختر السنة :</label>
+                    <select id="yearSelect" v-model="selectedYear" class="form-select">
+                        <option v-for="year in allYears" :key="year" :value="year">{{ year }}</option>
+                    </select>
+                </div>
+
+                <div class="mx-3">
+                    <label for="monthSelect">اختر الشهر:</label>
+                    <select id="monthSelect" v-model="selectedMonth" class="form-select">
+                        <option v-for="(month, index) in allMonths" :key="index + 1" :value="index + 1">{{ month }}</option>
+                    </select>
+                </div>
+            </div>
+
             <p class="fw-6">
                 عمليات الشراء (مع اجمالي مرات الشراء)
             </p>
@@ -80,7 +96,7 @@
                 <div class="col-md-6 mb-2">
                     <p class="fw-bold">
                         الطلبات الجديدة 
-                        <router-link to="/" class="more mx-2">
+                        <router-link to="/admin/orders" class="more mx-2">
                             المزيد
                         </router-link>
                     </p>
@@ -88,28 +104,20 @@
                     <table class="table new_order table-bordered">
                         <thead>
                             <tr>
-                                <td scope="col">#</td>
-                                <td scope="col">First</td>
-                                <td scope="col">Last</td>
+                                <td scope="col">رقم الطلب</td>
+                                <td scope="col">صاحب الطلب</td>
+                                <td scope="col">المبلغ الاجمالي</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
+                        <tbody v-if="products.length>0">
+                            <tr v-for="prod in products" :key="prod.id">
+                                <td>{{ prod.order_num  }}</td>
+                                <td>{{ prod.client  }}</td>
+                                <td>{{ prod.total_products_amount  }}</td>
                             </tr>
-                            <tr>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <td scope="row">3</td>
-                                <td >Larry the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
+                            
                         </tbody>
+                        <div class="text-center" v-else> لا توجد طلبات جديدة بعد </div>
                     </table>
                 </div>
             </div>
@@ -122,7 +130,7 @@
 <script>
 import navbar from "@/components/navComp.vue";
 import sidebar from "@/components/sidebarComp.vue";
-
+import axios from 'axios';
 import Chart from 'primevue/chart';
 
 export default {
@@ -133,6 +141,24 @@ export default {
 
             
             chartData2: null,
+            products : [],
+            profits : [],
+            total_orders: '',
+            total_revenues: '',
+            total_profit: '',
+            completed_orders: '',
+            un_completed_order: '',
+
+            selectedYear: new Date().getFullYear(),
+      selectedMonth: new Date().getMonth() + 1,
+      allYears: [],
+      allMonths: [
+        'January', 'February', 'March', 'April',
+        'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'
+      ],
+
+
             chartOptions2: {
                 plugins: {
                     legend: {
@@ -146,6 +172,31 @@ export default {
         }
     },
     methods:{
+        // get new 
+        async getHome(){
+            await axios.get(`admin/dashboard?date=${this.selectedYear+'-'+this.selectedMonth}`, {
+                headers:{
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                // this.newProducts = true ;
+                // this.inProducts = false ;
+                this.products = res.data.data.new_orders ;
+                this.profits = res.data.data.profits ;
+                this.total_orders = res.data.data.total_orders ;
+                this.total_revenues = res.data.data.total_revenues ;
+                this.total_profit = res.data.data.total_profit ;
+                this.completed_orders = res.data.data.completed_orders ;
+                this.un_completed_order = res.data.data.un_completed_order ;
+                setTimeout(() => {
+                    this.chartData = this.setChartData();
+                    this.chartOptions = this.setChartOptions();
+
+                    this.chartData2 = this.setChartData2();
+                }, 500);
+            } )
+        },
         setChartData() {
             // const documentStyle = getComputedStyle(document.documentElement);
 
@@ -155,7 +206,7 @@ export default {
                     
                     {
                         label: 'احصائيات الارباح',
-                        data: [50, 20, 30, 60, 50, 20, 30, 60, 50, 20, 30, 60], 
+                        data: this.profits, 
                         fill: true,
                         borderColor: '#3290d8',
                         tension: 0.4,
@@ -208,7 +259,7 @@ export default {
                 labels: ['الطلبات المكتملة','الطلبات الغير مكتملة'],
                 datasets: [
                     {
-                        data: [20, 80],
+                        data: [this.completed_orders, this.un_completed_order],
                         backgroundColor: ['#3C649F', '#35BFBF', documentStyle2.getPropertyValue('--green-500')],
                         hoverBackgroundColor: ['#3C649F', '#35BFBF', documentStyle2.getPropertyValue('--green-400')]
                     }
@@ -218,16 +269,29 @@ export default {
 
 
     },
+    watch:{
+        selectedYear(){
+            this.getHome();
+        },
+        selectedMonth(){
+            this.getHome();
+        },
+    },
     components: {
         Chart,
         navbar,
         sidebar,
     },
     mounted(){
-        this.chartData = this.setChartData();
-        this.chartOptions = this.setChartOptions();
 
-        this.chartData2 = this.setChartData2();
+        // setTimeout(() => {
+            
+            
+        // }, 1000);
+        this.getHome();
+
+        const currentYear = new Date().getFullYear();
+    this.allYears = Array.from({ length: 10 }, (_, index) => currentYear - index);
 
 
     }
@@ -235,6 +299,9 @@ export default {
 </script>
 
 <style lang="scss">
+    .form-select{
+        background-image:none !important;
+    }
     .new_order{
         box-shadow: 0px 0px 10px #5a5a5a40;
     }

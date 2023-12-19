@@ -9,7 +9,7 @@
         <div class="card_order px-5 pt-3 pb-4">
             <div class="row">
 
-                <div class="col-md-4 mb-3" v-for="(product) in products" :key="product.id">
+                <div class="col-md-3 mb-3" v-for="(product) in products" :key="product.id">
                     <!-- single product  -->
                     <div class="single_product position-relative">
 

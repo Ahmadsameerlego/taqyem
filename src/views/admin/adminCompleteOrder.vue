@@ -23,7 +23,7 @@
                 </div>
 
                 <p class="text-center fw-6">
-                    رقم الجوال المستلم: {{ receiver_phone }}  +966
+                    رقم الجوال المستلم: {{ receiver_phone }}  966+
                 </p>
 
 
@@ -58,32 +58,35 @@
 
 
                 <div class="d-flex justify-content-center align-items-center mt-3">
-                    <button class="btn main_btn px-5 pt-2 pb-2"  :disabled="disabled" @click.prevent="createOrder">
+                    <button class="third_btn  px-5 pt-2 pb-2  btn" @click="$router.push(`/admin/details/${this.$route.params.id}`)" style="border-radius:3px !important"> السابق </button>
+
+                    <button class="btn main_btn px-5 pt-2 pb-2 mx-3"  :disabled="disabled" @click.prevent="createOrder">
                          <span v-if="!disabled">انهاء</span> 
                          <div class="spinner-border" role="status" v-if="disabled">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     </button>
+
                 </div>
 
 
-                <Dialog v-model:visible="visible" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+                <Dialog v-model:visible="visible" modal class="confirm" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                    <div class="success_alert mb-2">
                         <i class="fa-solid fa-check"></i>
                    </div>
 
                    <h5 class="fw-6 text-center mb-2">
-                    تم الطلب بنجاح
+                    تم تعديل الطلب بنجاح
                    </h5>
 
                    <p class="text-danger text-center">
                     رقم الطلب #{{ order_num }}
                    </p>
                    
-                   <div class="d-flex justify-content-center align-items-center">
+                   <!-- <div class="d-flex justify-content-center align-items-center">
                     <button class="btn main_btn br-20 px-4" @click.prevent="$router.push('/admin/orders')"> الطلبات </button>
                     <button class="btn main_btn mx-2 br-20 px-4" @click.prevent="$router.push('/admin/home')"> الرئيسية </button>
-                   </div>
+                   </div> -->
                 </Dialog>
 
             </div>
@@ -195,9 +198,9 @@ export default {
                     setTimeout(() => {
                         this.visible = true
                     }, 1000);
-                    // setTimeout(() => {
-                    //     this.$router.push('/admin/orders')
-                    // }, 2000);
+                    setTimeout(() => {
+                        this.$router.push('/admin/orders')
+                    }, 5000);
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
                     this.disabled = false;

@@ -4,24 +4,16 @@
     <section id="content">
           <div class="container">
               
-            <!-- add product  -->
-            <div class="d-flex justify-content-end">
-                <router-link to="/admin/addProduct" class="main_btn br-20 px-4 pt-2 pb-2">
-                    اضافة منتج جديد
-                    <span class="mx-2">
-                        <i class="fas fa-plus"></i>
-                    </span>
-                </router-link>
-            </div>
+            
   
             <!-- interactions  -->
             <div class="interactions position-relative d-flex justify-content-between align-items-center mt-5 mb-4">
                 <!-- filter  -->
                 <div class="">
-                    <button class="btn main_btn" @click="toggleMenu">
+                    <!-- <button class="btn main_btn" @click="toggleMenu">
                         <i class="fa-solid fa-filter"></i>
                         تصفية
-                    </button>
+                    </button> -->
 
 
                     <!-- filter content  -->
@@ -93,6 +85,16 @@
                     </button>
                 </div>
             </div>
+
+            <!-- add product  -->
+            <div class="d-flex justify-content-end mb-3">
+                <router-link to="/admin/addProduct" class="main_btn br-20 px-4 pt-2 pb-2">
+                    اضافة منتج جديد
+                    <span class="mx-2">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                </router-link>
+            </div>
                   
             <!-- table  -->
             <div class="card card_table">
@@ -108,6 +110,13 @@
                     <Column field="name" header="اسم المنتج"></Column>
                     <Column field="description" header="وصف المنتج"></Column>
                     <Column field="qty" header="كمية المنتج"></Column>
+                    <Column  header="نسبة المنتج">
+                        <template #body="slotProps">
+                            <span :style="{ backgroundColor: slotProps.data.color }" class="labelColor"></span>
+                            <!-- <span class="text-center" style="margin-left: 8px;"> {{slotProps.data.qty }} % </span> -->
+                            {{ percentage    }}
+                        </template>
+                    </Column>
                     <Column field="price" header="سعر المنتج"></Column>
                     
                     
@@ -151,6 +160,7 @@
               filters: {
                   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
               },
+              percentage : ''
           }
       },
       components:{
@@ -161,6 +171,23 @@
           Calendar
       },
       methods:{
+        getColor(amount, total) {
+            // const remaining = total - amount;
+            const percentage = (amount / total) * total;
+
+            // Define dynamic thresholds based on the calculated percentage
+            const greenThreshold = 70;  // 70% of the calculated percentage
+            const yellowThreshold = 40;  // 40% of the calculated percentage
+
+            if (percentage >= greenThreshold && percentage <= 100) {
+                return 'green';
+            } else if (percentage >= yellowThreshold && percentage < greenThreshold) {
+                return 'yellow';
+            } else {
+                return 'red';
+            }
+        } ,
+
           selectButton(button) {
               this.selectedButton = button;
               
@@ -192,5 +219,10 @@
   </script>
   
   <style>
-  
+    .labelColor{
+        width: 70px;
+        height: 10px;
+        display:block ;
+        border-radius:5px ;
+    }
   </style>

@@ -18,7 +18,7 @@
                     مكتمل
                 </button>
                 <button class="btn w-25 " @click="selectButton('cancel')" :class="{ 'selected': selectedButton === 'cancel' }" @click.prevent="getRefused()">
-                    المفروضة
+                    المرفوضة
                 </button>
             </div>
 
@@ -26,10 +26,10 @@
             <div class="interactions position-relative d-flex justify-content-between align-items-center mt-5 mb-4">
                 <!-- filter  -->
                 <div class="">
-                    <button class="btn main_btn" @click="toggleMenu">
+                    <!-- <button class="btn main_btn" @click="toggleMenu">
                         <i class="fa-solid fa-filter"></i>
                         تصفية
-                    </button>
+                    </button> -->
 
 
                     <!-- filter content  -->
@@ -175,7 +175,10 @@
                         <template #body="slotProps">
                             <router-link class="main_btn br-20 px-4 pt-2 pb-2" :to="'/admin/client/'+slotProps.data.id">
                                 تفاصيل
-                            </router-link>                           
+                            </router-link>    
+                            <button class="btn-danger mx-2 btn br-20 px-4 pt-2 pb-2" @click.prevent="deleteOrder(slotProps.data.id)">
+                                حذف
+                            </button>                          
                         </template>
                     </Column>
 
@@ -204,7 +207,7 @@
                                         <i class="fa-solid fa-phone-volume"></i>
                                     </span>
                                 </a>
-                                <a :href="'https://api.whatsapp.com/send?phone='+slotProps.data.receiver_phone" target="_blank">
+                                <a :href="'https://api.whatsapp.com/send?phone=966'+slotProps.data.receiver_phone" target="_blank">
                                     <span class="contact_icon mx-2">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </span>
@@ -233,7 +236,10 @@
                         <template #body="slotProps">
                             <router-link class="main_btn br-20 px-4 pt-2 pb-2" :to="'/admin/client/'+slotProps.data.id">
                                 تفاصيل
-                            </router-link>                           
+                            </router-link>  
+                            <button class="btn-danger mx-2 btn br-20 px-4 pt-2 pb-2" @click.prevent="deleteOrder(slotProps.data.id)">
+                                حذف
+                            </button>                            
                         </template>
                     </Column>
 
@@ -273,7 +279,10 @@
                         <template #body="slotProps">
                             <router-link class="main_btn br-20 px-4 pt-2 pb-2" :to="'/complete/client/'+slotProps.data.id">
                                 تفاصيل
-                            </router-link>                           
+                            </router-link>  
+                            <!-- <button class="btn-danger mx-2 btn br-20 px-4 pt-2 pb-2" @click.prevent="deleteOrder(slotProps.data.id)">
+                                حذف
+                            </button>                             -->
                         </template>
                     </Column>
 
@@ -303,7 +312,7 @@
                                         <i class="fa-solid fa-phone-volume"></i>
                                     </span>
                                 </a>
-                                <a :href="'https://api.whatsapp.com/send?phone='+slotProps.data.receiver_phone" target="_blank">
+                                <a :href="'https://api.whatsapp.com/send?phone=966'+slotProps.data.receiver_phone" target="_blank">
                                     <span class="contact_icon mx-2">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </span>
@@ -333,7 +342,7 @@
                             <router-link class="main_btn br-20 px-4 pt-2 pb-2" :to="'/complete/client/'+slotProps.data.id">
                                 تفاصيل
                             </router-link>  
-                            <button class="btn btn-danger br-20 px-4  mx-2" @click="openRefuse(slotProps.data.refuse_reason)"> سب الرفض </button>                         
+                            <button class="btn btn-danger br-20 px-4  mx-2" @click="openRefuse(slotProps.data.refuse_reason)"> سبب الرفض </button>                         
                         </template>
                     </Column>
 
@@ -478,8 +487,11 @@ export default {
                 }
             })
             .then( (res)=>{
-                this.newProducts = true ;
                 this.inProducts = false ;
+                this.is_refused= false
+                this.is_deliver= false ;
+                this.is_complete= false ;
+                this.newProducts = true ;
                 this.new_products = res.data.data.orders ;
             } )
         },
@@ -491,8 +503,11 @@ export default {
                 }
             })
             .then( (res)=>{
-                this.inProducts = true ;
                 this.newProducts= false ;
+                this.is_deliver= false ;
+                this.is_complete= false ;
+                this.inProducts = true ;
+                this.is_refused= false
                 this.in_products = res.data.data.orders ;
             } )
         },
@@ -507,7 +522,9 @@ export default {
             .then( (res)=>{
                 this.inProducts = false ;
                 this.newProducts= false ;
+                this.is_complete= false ;
                 this.is_deliver= true ;
+                this.is_refused= false
                 this.in_deliver = res.data.data.orders ;
             } )
         },
@@ -524,6 +541,7 @@ export default {
                 this.newProducts= false ;
                 this.is_deliver= false ;
                 this.is_complete= true ;
+                this.is_refused= false ;
                 this.completes = res.data.data.orders ;
             } )
         },

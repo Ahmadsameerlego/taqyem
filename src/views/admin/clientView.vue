@@ -9,10 +9,10 @@
               <div class="interactions position-relative d-flex justify-content-between align-items-center mt-5 mb-4">
                   <!-- filter  -->
                   <div class="">
-                      <button class="btn main_btn" @click="toggleMenu">
+                      <!-- <button class="btn main_btn" @click="toggleMenu">
                           <i class="fa-solid fa-filter"></i>
                           تصفية
-                      </button>
+                      </button> -->
   
   
                       <!-- filter content  -->
@@ -108,7 +108,7 @@
                                         <i class="fa-solid fa-phone-volume"></i>
                                     </span>
                                 </a>
-                                <a :href="'https://api.whatsapp.com/send?phone='+slotProps.data.receiver_phone" target="_blank">
+                                <a :href="'https://api.whatsapp.com/send?phone=966'+slotProps.data.receiver_phone" target="_blank">
                                     <span class="contact_icon mx-2">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </span>

@@ -22,7 +22,7 @@
                 <Column field="name" header="اسم المستخدم"></Column>
                 <Column field="role_name" header="دور المستخدم"></Column>
                 <Column field="last_active_at" header="اخر ظهور"></Column>
-                <Column field="qty" header="تاريخ الانشاء"></Column>
+                <Column field="created_at" header="تاريخ الانشاء"></Column>
 
                 <Column  header="حالة الحساب">
                     <template #body="slotProps" >
@@ -392,10 +392,10 @@ export default {
                 this.role = response.role ;
                 this.role_name = response.role_name ;
 
-                // this.bank_name = response.bank_name ;
-                // this.account_num = response.account_num ;
-                // this.account_owner_name = response.account_owner_name ;
-                // this.iban_num = response.iban_num ;
+                this.bank_name = response.bank_name ;
+                this.account_num = response.account_num ;
+                this.account_owner_name = response.account_owner_name ;
+                this.iban_num = response.iban_num ;
             } )
         },
         // change password 

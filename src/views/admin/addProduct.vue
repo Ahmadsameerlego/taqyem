@@ -15,7 +15,11 @@
                     <span class="edit">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </span>
+
                 </section>
+
+                <div class="text-center text-danger mt-2 mb02"> يرجي رفع صورة بحد اقصى للطول 165 px </div>
+
 
                 <div class="row mt-3">
                     <div class="col-md-6 mb-3">

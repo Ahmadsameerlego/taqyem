@@ -4,7 +4,7 @@
 
     <div class="container mt-5">
         <div class="login_options  w-75 mx-auto d-flex justify-content-between align-items-center mb-3">
-            <button class="btn w-50 " @click="selectButton('sales')" :class="{ 'selected': selectedButton === 'sales' }">
+            <button class="btn w-50 " @click="selectButton('sales')" :class="{ 'selected': selectedButton === 'sales' }"  @click.prevent="getCompleted">
                 تم توصيلها
             </button>
             <button class="btn w-50 " @click="selectButton('delivery')" :class="{ 'selected': selectedButton === 'delivery' }" @click.prevent="getInDelelivery">
@@ -43,7 +43,7 @@
                                     <i class="fa-solid fa-phone-volume"></i>
                                 </span>
                             </a>
-                            <a :href="'https://api.whatsapp.com/send?phone='+slotProps.data.receiver_phone" target="_blank">
+                            <a :href="'https://api.whatsapp.com/send?phone=966'+slotProps.data.receiver_phone" target="_blank">
                                 <span class="contact_icon mx-2">
                                     <i class="fa-brands fa-whatsapp"></i>
                                 </span>
@@ -165,12 +165,12 @@
         </div>
        <div class="form-group mb-2" v-if="isCash">
             <label for="" class="fw-6 mb-2"> رقم العملية </label>
-            <input type="number" class="form-control" v-model="op_number" disabled>
+            <input type="number" class="form-control" v-model="reference_code" >
        </div>
 
        <div class="form-group">
             <label for="" class="fw-6 mb-2"> رمز العملية "otp" </label>
-            <input type="number" class="form-control" v-model="otp">
+            <input type="number" class="form-control" v-model="otp_code">
        </div>
 
        <div class="d-flex mt-3">
@@ -196,13 +196,13 @@ import Toast from 'primevue/toast';
 export default {
     data(){
         return{
-            selectedButton: 'sales',
+            selectedButton: 'delivery',
             products: null,
             deliver_products : null,
             filters: {
                 global: { value: null, matchMode: FilterMatchMode.CONTAINS },
             },
-            still : false ,
+            still : true ,
             refuse : false,
             accept : false,
             refuse_reason : '',
@@ -217,7 +217,8 @@ export default {
             price : '',
             order_in_id : '',
             accept_disabled : false,
-            otp : ''
+            otp_code : '',
+            reference_code : ''
         }
     },
     watch:{
@@ -248,7 +249,7 @@ export default {
         openAccept(price, code, id){
             this.accept         = true ;
             this.price          = price ;
-            this.op_number      = code ;
+            this.reference_code      = code ;
             this.order_in_id    = id ;
         },
         async getCompleted(){
@@ -296,6 +297,9 @@ export default {
                         // this.getCompleted();
                         // this.selectButton = 'sales';
                     }, 1000);
+                    this.getCompleted();
+                    // this.this.getInDelelivery();
+
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
                 }
@@ -306,7 +310,9 @@ export default {
         async accept_order(){
             const fd = new FormData();
             this.accept_disabled = true ;
-            fd.append('pay_type', this.pay_type)
+            fd.append('pay_type', this.pay_type) ;
+            fd.append('reference_code', this.reference_code) ;
+            fd.append('otp_code', this.otp) ;
             await axios.post(`delegate/orders/${this.order_in_id}/finish`, fd , {
                 headers:{
                     Authorization : `Bearer ${localStorage.getItem('token')}`
@@ -319,6 +325,9 @@ export default {
                     setTimeout(() => {
                         this.accept = false ;
                     }, 1000);
+
+                    this.getInDelelivery();
+                    this.getCompleted();
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
                     this.accept_disabled = false ;
@@ -338,7 +347,7 @@ export default {
     },
     mounted() {
         this.selectedButton == 'sales';
-        this.getCompleted();
+        this.getInDelelivery();
         this.getPayment();
     }
 }

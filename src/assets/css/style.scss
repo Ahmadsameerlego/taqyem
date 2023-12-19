@@ -10,6 +10,10 @@ body, #app{
     min-height: 100vh;
 }
 
+.p-component{
+    font-family: 'Cairo', sans-serif !important;
+}
+
 @media(max-width:768px){
     #login .login_card {
         width: 85%;
@@ -29,7 +33,7 @@ body, #app{
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         width: 100%;
-        padding-right: 0px;
+        padding-right: 30px;
     }
     .single_card{margin: auto;}
     .home_table{

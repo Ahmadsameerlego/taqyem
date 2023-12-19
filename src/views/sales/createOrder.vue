@@ -50,11 +50,14 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-group position-relative">
-                            <label for="" class="mb-1 fw-6"> رقم جوال المستلم  </label>
-                            <input type="number" class="form-control" name="" id="" v-model="receiver_phone">
-                            <select name="" class="number form-control" id="">
-                                <option value="">+996 </option>
-                            </select>
+                            <div class="position-relative">
+                                <label for="" class="mb-1 fw-6"> رقم جوال المستلم  </label>
+                                <input type="number" class="form-control" name="" id="" v-model="receiver_phone" min="9" max="10" @input="handleInput">
+                                <select name="" class="number form-control" id="">
+                                    <option value="">+996 </option>
+                                </select>
+                            </div>
+                            <span class="text-danger" style="font-size:13px;" v-if="isPhoneValid"> يجب أن يكون رقم الهاتف من 9 إلي 10 أرقام </span>
                         </div>
                     </div>
 
@@ -81,7 +84,8 @@ export default {
             owner_name : '',
             receiver_name : '',
             receiver_phone : '',
-            category_id : ''
+            category_id : '',
+            isPhoneValid : true
         }
     },
     components:{
@@ -89,15 +93,27 @@ export default {
     },
     computed:{
         isDisabled(){
+            
+
             return (
                 !this.owner_name ||
                 !this.receiver_name ||
-                !this.receiver_phone ||
+                 this.isPhoneValid ||
                 !this.category_id
             )
         }
     },
     methods:{
+        handleInput() {
+            const numericValue = parseFloat(this.receiver_phone);
+
+                if (isNaN(numericValue)) {
+            // If it's not a number, set the value to the previous numeric value
+            this.receiver_phone = this.receiver_phone  || 0;
+            console.log('dddddd')
+         }
+        },  
+
         async getCategories(){
             await axios.get('categories')
             .then( (res)=>{
@@ -111,8 +127,30 @@ export default {
             localStorage.setItem('category_id', this.category_id);
         }
     },
+    watch:{ 
+        receiver_phone(){
+            const receiverPhoneString = String(this.receiver_phone);
+            if(receiverPhoneString.length < 9 || receiverPhoneString.length > 10 ){
+                this.isPhoneValid = true ;
+            }else{
+                this.isPhoneValid = false ;
+            }
+        }
+    },
     mounted(){
         this.getCategories();
+
+        this.owner_name = localStorage.getItem('owner_name');
+        this.receiver_name = localStorage.getItem('receiver_name');
+        this.receiver_phone = localStorage.getItem('receiver_phone');
+        this.category_id = localStorage.getItem('category_id');
+
+
+        localStorage.setItem('products', []);
+        localStorage.setItem('city_id', '');
+        localStorage.setItem('map_url', '');
+        localStorage.setItem('address', '');
+
     }
 }
 </script>

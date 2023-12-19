@@ -26,7 +26,7 @@
         </div>
 
         <div class="form-group align-items-center d-flex remember mb-3">
-          <input type="checkbox" class="" >
+          <input type="checkbox" class="" v-model="remember_me">
           <span for="" class="mx-2"> تذكرني </span>
         </div>
 
@@ -57,9 +57,16 @@ export default {
       selectedButton: 'sales',
       email : '',
       password : '',
-      disabled : false
+      type : '',
+      disabled : false,
+      remember_me : false
 
     }
+  },
+  watch:{
+    // remember_me(){
+     
+    // }
   },
   computed:{
     isDisabled(){
@@ -79,6 +86,15 @@ export default {
       const fd = new FormData();
       fd.append('email', this.email);
       fd.append('password', this.password);
+
+      if( this.selectedButton == 'sales' ){
+        fd.append('role', '3')
+      }else if(this.selectedButton == 'delivery'){
+        fd.append('role', '4')
+      }else if(this.selectedButton == 'management'){
+        fd.append('role', '1')
+      }
+
       await axios.post('login', fd , {
         headers:{
           Authorization : `Bearer ${localStorage.getItem('token')}`
@@ -92,6 +108,11 @@ export default {
           localStorage.setItem('token', res.data.data.token);
           localStorage.setItem('user', JSON.stringify(res.data.data.user));
 
+          if( this.remember_me == true){
+            localStorage.setItem('email', this.email);
+            localStorage.setItem('password', this.password);
+          }
+          
           // check what user 
 
           //sales
@@ -125,6 +146,16 @@ export default {
   },
   components :{
     Toast
+  },
+  mounted(){
+    if( localStorage.getItem('email') ){
+      this.email = localStorage.getItem('email') ;
+    }
+    
+    if( localStorage.getItem('password') ){
+      this.password = localStorage.getItem('password') ;
+    }
+
   }
 }
 </script>

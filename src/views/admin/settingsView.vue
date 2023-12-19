@@ -55,7 +55,7 @@
                                     تاريخ الانضمام : 
                                 </h6>
                                 <h6 class="value">
-                                    5/12/2023
+                                   {{ user.created_at }}
                                 </h6>
                             </div>
                         </div>

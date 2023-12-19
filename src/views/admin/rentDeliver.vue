@@ -100,23 +100,21 @@
                     <div class="title mb-2">
                         <span> الطلبات تحت التنفيذ </span>
                     </div>
-                    <h2 class="fw-bold specific">  {{ deliver.in_progress_count }} </h2>
+                    <h2 class="fw-bold specific"> {{ deliver.in_progress_count }}</h2>
                 </div>
-                <!-- single date  -->
-                <div class="single_date mx-2">
-
-                    <div class="title mb-2">
-                        <span> الطلبات المرفوضة </span>
-                    </div>
-                    <h2 class="fw-bold specific"> {{ deliver.refused_count }}  </h2>
-                </div>
+                
 
                 
 
 
             </section>
+
+            <!-- add order  -->
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn main_btn px-4 br-20" @click="addOrder=true"> انشاء طلب </button>
+            </div>
             <!-- table  -->
-            <div class="card card_table" >
+            <div class="card card_table"  >
                 <DataTable 
                     :value="delivers" 
                     paginator :rows="5" 
@@ -129,44 +127,23 @@
 
                     <Column field="id" header="رقم الطلب"></Column>
                     <Column field="final_total" header="مبلغ التسوية"></Column>
-                    <Column field="reward_amount" header="المكافأة"></Column>
-                    <Column field="orders_count" header="عدد الطلبات"></Column>
-                    <Column field="pay_type_text" header="طريقة التسوية"></Column>
-                    <Column  header="حالة الطلب">
+                    <Column field="orders_count" header="الطلبات"></Column>
+                    <Column field="pay_type" header="طريقة التسوية"></Column>
+                    <Column  header="حالة الطلب" >
                         <template #body="slotProps">
-
-                            <!-- done  -->
-                            <button class="btn complete br-20 px-4 " v-if="slotProps.data.status=='completed'">
-                                    مكتمل
-                            </button>  
-                            <!-- still  -->
-                            <button class="btn btn_still br-20 px-4 " v-if="slotProps.data.status=='pending'">
-                                    جاري المعالجة
-                            </button>     
-                            <!-- not          -->
-                            <button class="btn br-20 px-4 btn-danger"  v-if="slotProps.data.status=='not'">
-                                    غير مسحوب
-                            </button>
-
-
-                           
+                            <span v-if="slotProps.data.status=='pending'" class="still"> {{ slotProps.data.status_text }} </span>
+                            <span v-if="slotProps.data.status=='completed'" class="complete"> {{ slotProps.data.status_text }} </span>
                         </template>
-
-
-                        
                     </Column>
-
-                    <Column field="month" header="شهر "></Column>
                     <Column field="date" header="تاريخ التسوية"></Column>
                     <Column >
                         <template #body="slotProps">
 
                             <!-- done  -->
-                            <button class="btn main_btn br-20 px-4 " @click="openSettle(slotProps.data)" v-if="slotProps.data.status=='completed'||slotProps.data.status=='pending'">
+                            <button class="btn main_btn br-20 px-4 " @click="openSettle(slotProps.data.final_total ,  slotProps.data.id )" v-if="slotProps.data.status=='pending'">
                                     تفاصيل
                             </button>  
-
-                            <button class="btn main_btn br-20 px-4 " @click="openNot(slotProps.data)" v-if="slotProps.data.status=='not'">
+                            <button class="btn main_btn br-20 px-4 " @click="openCompleted(slotProps.data.final_total ,  slotProps.data.id , slotProps.data.image)" v-if="slotProps.data.status=='completed'">
                                     تفاصيل
                             </button>  
                             <!-- still  -->
@@ -180,11 +157,6 @@
 
                         
                     </Column>
-
-
-                    
-
-
                     
                 </DataTable>
             </div>    
@@ -193,159 +165,20 @@
     </section>
 
 
-    <Dialog  v-model:visible="visible" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-       <h6 class="text-center fw-bold mb-2"> انشاء طلب </h6>
-       <div class="d-flex justify-content-between align-items-center">
-        <p class="fw-bold"> تفاصيل طلب التسوية </p>
-        <button class="btn main_btn" @click="printContent">
-            طباعة
-            <i class="fa-solid fa-print"></i>
-        </button>
-       </div>
-       <form ref="settleForm" id="">
-            <div class="row">
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> العمولة </label>
-                        <input type="number" class="form-control" disabled v-model="profit">
-                        
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> عدد الطلبات </label>
-                        <input type="number" class="form-control" disabled v-model="orders">
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> قيمة المكافأة </label>
-                        <input type="number" class="form-control" disabled v-model="reward">
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> الاجمالي </label>
-                        <input type="number" class="form-control" disabled v-model="amount">
-                    </div>
-                </div>
-                <div class="col-md-12 mb-2">
-                    <div class="form-group">
-                        <label for=""> رقم الطلب </label>
-                        <input type="number" class="form-control" disabled v-model="number">
-                    </div>
-                </div>
-                
-
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> تاريخ اجراء الطلب </label>
-                        <!-- <input type="date" class="form-control" v-model="currentDate"> -->
-                        <div class="current_date">
-                            {{ currentDate }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> وقت اجراء الطلب</label>
-                        <!-- <input type="time" class="form-control" v-model="currentTime"> -->
-                        <div class="current_date">
-                            {{ cuurentTime }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12 mb-4 mt-4">
-                    <div class="d-flex justify-content-between px-4 pt-4 pb-4 settle_info">
-                        <div>
-                            <p > اسم البنك / {{ deliver.bank_name }} </p>
-                            <p> صاحب الحساب / {{ deliver.account_owner_name }} </p>
-                        </div>
-                        <div>
-                            <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-12 mb-2">
-                    <!-- <div class="upload position-relative">
-
-                    </div> -->
-
-                    <div class="uploadImage" >
-                        <div  class="pdfPreview">
-                        <iframe :src="pdf_uploaded" width="100%" height="400px"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-12 mb-3 sttle_pay_content ">
-                    <div class="d-flex justify-content-between">
-
-                        <div class="form-group">
-                            <p class="fw-bold">طريقة التسوية</p>
-
-                            <div class="settle_way d-flex">
-                                <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="1">
-                                    <label for="" class="mx-3"> نقدى </label>
-                                </div>
-
-                                <div class="d-flex align-items-center mx-5">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="2">
-                                    <label for="" class="mx-3"> تحويل </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-
-            <!-- <div class="flex_center mt-4">
-                <button class="btn main_btn px-5" :disabled="settleDisabled" @click.prevent="settle"> حفظ </button>
-            </div> -->
-       </form>
-    </Dialog>
-    <Dialog v-model:visible="sttle_not" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-       <h6 class="text-center fw-bold mb-2"> انشاء طلب </h6>
+    <Dialog v-model:visible="visible" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+       <h6 class="text-center fw-bold mb-2"> {{ deliver.delegate_name }} </h6>
        <p class="fw-bold"> تفاصيل طلب التسوية </p>
-       <form ref="settleForm_not">
+       <form ref="settleForm">
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <div class="form-group">
-                        <label for=""> العمولة </label>
-                        <input type="number" class="form-control" name="total_profit"  v-model="profit">
+                        <label for=""> مبلغ التسوية </label>
+                        <input type="number" class="form-control" disabled v-model="amount">
                         
                     </div>
                 </div>
+                
                 <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> عدد الطلبات </label>
-                        <input type="number" class="form-control" disabled v-model="orders">
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> قيمة المكافأة </label>
-                        <input type="number" class="form-control" name="reward_amount"  v-model="reward">
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> الاجمالي </label>
-                        <input type="number" class="form-control" name="" disabled v-model="amount">
-                    </div>
-                </div>
-                <div class="col-md-12 mb-2">
                     <div class="form-group">
                         <label for=""> رقم الطلب </label>
                         <input type="number" class="form-control" disabled v-model="number">
@@ -385,10 +218,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
 
                 <div class="col-md-12 mb-2">
                     <div class="upload position-relative">
@@ -422,12 +251,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="1">
+                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="2">
+                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -441,7 +270,194 @@
             </div>
 
             <div class="flex_center mt-4">
-                <button class="btn main_btn px-5" :disabled="settleDisabled" @click.prevent="settle_not"> حفظ </button>
+                <button class="btn main_btn px-5" :disabled="settleDisabled" @click.prevent="settle"> حفظ </button>
+            </div>
+       </form>
+    </Dialog>
+
+    <Dialog v-model:visible="completed_settle" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+       <h6 class="text-center fw-bold mb-2"> {{ deliver.delegate_name }} </h6>
+       <div class="d-flex justify-content-between align-items-center">
+        <p class="fw-bold"> تفاصيل طلب التسوية </p>
+        <button class="btn main_btn" @click="printContent">
+            طباعة
+            <i class="fa-solid fa-print"></i>
+        </button>
+       </div>
+       <form ref="settleForm">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> مبلغ التسوية </label>
+                        <input type="number" class="form-control" disabled v-model="amount">
+                        
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> رقم الطلب </label>
+                        <input type="number" class="form-control" disabled v-model="number">
+                    </div>
+                </div>
+                
+
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> تاريخ اجراء الطلب </label>
+                        <!-- <input type="date" class="form-control" v-model="currentDate"> -->
+                        <div class="current_date">
+                            {{ currentDate }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> وقت اجراء الطلب</label>
+                        <!-- <input type="time" class="form-control" v-model="currentTime"> -->
+                        <div class="current_date">
+                            {{ cuurentTime }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mb-4 mt-4">
+                    <div class="d-flex justify-content-between px-4 pt-4 pb-4 settle_info">
+                        <div>
+                            <p > اسم البنك / {{ deliver.bank_name }} </p>
+                            <p> صاحب الحساب / {{ deliver.account_owner_name }} </p>
+                        </div>
+                        <div>
+                            <p > رقم الحساب / {{ deliver.account_num }} </p>
+                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mb-2">
+                    <!-- <div class="upload position-relative">
+
+                        <div class="upload_content">
+                            <div>
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            
+                            <div>
+                                <h6> ارفع  </h6>
+                            </div>
+                        </div>
+
+                        <input type="file" name="image" class="inputFile" @change="uploadPDF">
+                    </div> -->
+
+                    <div class="uploadImage">
+                        <!-- <div v-if="pdfUrl" class="pdfPreview"> -->
+                        <iframe :src="pdfUrlGetted" width="100%" height="400px"></iframe>
+                        <!-- </div> -->
+                    </div>
+                </div>
+
+
+                <div class="col-md-12 mb-3">
+                    <div class="d-flex justify-content-between">
+
+                        <div class="form-group">
+                            <p class="fw-bold">طريقة التسوية</p>
+
+                            <div class="settle_way d-flex">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="1">
+                                    <label for="" class="mx-3"> نقدى </label>
+                                </div>
+
+                                <div class="d-flex align-items-center mx-5">
+                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="2">
+                                    <label for="" class="mx-3"> تحويل </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- <div class="flex_center mt-4">
+                <button class="btn main_btn px-5" :disabled="settleDisabled" @click.prevent="settle"> حفظ </button>
+            </div> -->
+       </form>
+    </Dialog>
+
+
+    <!-- add order  -->
+    <Dialog v-model:visible="addOrder" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+       <h6 class="text-center fw-bold mb-2"> انشاء طلب </h6>
+       <form>
+            <div class="row">
+                
+  
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex justify-content-between">
+
+                        <div class="form-group">
+                            <p class="text-center">الرصيد المتاح</p>
+
+                            <div class="position-relative settle_way settle_info2 settle_info3 d-flex">
+                               <input type="number" class="form-control avilable_amount" :value="deliver.final_total" disabled>
+                               <h6 class="currency">
+                                ريال
+                               </h6>
+                            </div>
+                        </div>
+
+                        <div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex justify-content-between">
+
+                        <div class="form-group">
+                            <p class="text-center">طريقة التسوية</p>
+
+                            <div class="settle_way settle_info2   d-flex">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" v-model="pay_type" name="pay_type" value="1">
+                                    <label for="" class="mx-3"> نقدى </label>
+                                </div>
+
+                                <div class="d-flex align-items-center mx-5">
+                                    <input type="radio"  v-model="pay_type" name="pay_type" value="2">
+                                    <label for="" class="mx-3"> تحويل </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mb-4 mt-4">
+                    <div class="d-flex justify-content-between px-4 pt-4 pb-4 settle_info">
+                        <div>
+                            <p > اسم البنك / {{ deliver.bank_name }} </p>
+                            <p> صاحب الحساب / {{ deliver.account_owner_name }} </p>
+                        </div>
+                        <div>
+                            <p > رقم الحساب / {{ deliver.account_num }} </p>
+                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="flex_center mt-4">
+                <button class="btn main_btn px-5" :disabled="addDisabled" @click.prevent="addNewOrder"> حفظ </button>
             </div>
        </form>
     </Dialog>
@@ -452,32 +468,15 @@
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <div class="form-group">
-                        <label for=""> العمولة </label> : 
-                        {{  profit}}
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> عدد الطلبات </label> : {{ orders }}
-                        <!-- <input type="number" class="form-control" disabled v-model="orders"> -->
-
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> قيمة المكافأة </label> : {{ reward }}
-                        <!-- <input type="number" class="form-control" disabled v-model="reward"> -->
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label for=""> الاجمالي </label>  : {{ amount }}
+                        <label for=""> مبلغ التسوية </label> : {{amount}}
                         <!-- <input type="number" class="form-control" disabled v-model="amount"> -->
+                        
                     </div>
                 </div>
-                <div class="col-md-12 mb-2">
+                
+                <div class="col-md-6 mb-2">
                     <div class="form-group">
-                        <label for=""> رقم الطلب </label> :  {{ number }}
+                        <label for=""> رقم الطلب </label> : {{number}}
                         <!-- <input type="number" class="form-control" disabled v-model="number"> -->
                     </div>
                 </div>
@@ -516,21 +515,31 @@
                     </div>
                 </div>
 
-
                 <div class="col-md-12 mb-2">
                     <!-- <div class="upload position-relative">
 
+                        <div class="upload_content">
+                            <div>
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            
+                            <div>
+                                <h6> ارفع  </h6>
+                            </div>
+                        </div>
+
+                        <input type="file" name="image" class="inputFile" @change="uploadPDF">
                     </div> -->
 
-                    <div class="uploadImage" >
-                        <div  class="pdfPreview">
-                        <iframe :src="pdf_uploaded" width="100%" height="400px"></iframe>
-                        </div>
+                    <div class="uploadImage">
+                        <!-- <div v-if="pdfUrl" class="pdfPreview"> -->
+                        <iframe :src="pdfUrlGetted" width="100%" height="400px"></iframe>
+                        <!-- </div> -->
                     </div>
                 </div>
 
 
-                <div class="col-md-12 mb-3 sttle_pay_content ">
+                <div class="col-md-12 mb-3 sttle_pay_content">
                     <div class="d-flex justify-content-between">
 
                         <div class="form-group">
@@ -538,12 +547,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="1">
+                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="2">
+                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -570,11 +579,12 @@
   import DataTable from 'primevue/datatable';
   import Column from 'primevue/column';
   import { FilterMatchMode } from 'primevue/api';
-  import moment from 'moment';
 
   import Dialog from 'primevue/dialog';
-    import axios from 'axios'
-    import Toast from 'primevue/toast';
+import axios from 'axios';
+import Toast from 'primevue/toast';
+import moment from 'moment';
+
 
 export default {
     components:{
@@ -595,26 +605,27 @@ export default {
               visible : false,
               image : '',
               visib : false,
+              addOrder : false,
               deliver : {},
               delivers : [],
+              pay_type : '',
+              addDisabled : false,
               amount : '',
-              orders : '',
-              reward : '',
-              profit : '',
               number : '',
-              cuurentTime  :'',
               currentDate : '',
+              cuurentTime : '',
+              pay_type2 : '',
               settleDisabled : false,
-              sttle_not : false,
+              settle_id : '',
               pdfUrl: null,
-              pdf_uploaded : ''
+              completed_settle : false,
+              pdfUrlGetted : ''
 
-              
           }
       },
 
+
       methods:{
-      
         printContent() {
             this.$nextTick(() => {
 
@@ -641,46 +652,94 @@ export default {
             };
         })
         },
-
-
         uploadPDF(e) {
-            const file = e.target.files[0];
-            const allowedTypes = ['application/pdf'];
+        const file = e.target.files[0];
+        const allowedTypes = ['application/pdf'];
 
-            if (file && allowedTypes.includes(file.type)) {
-                this.visib = true;
-                this.loadPDF(file);
-            } else {
-                alert('Please select a valid PDF file.');
-            }
-            },
-            loadPDF(file) {
-            const reader = new FileReader();
-
-            reader.onload = (event) => {
-                const pdfUrl = event.target.result;
-                this.pdfUrl = pdfUrl;
-            };
-
-            reader.readAsDataURL(file);
-            },
-        openNot(data){
-            this.sttle_not = true ;
-            this.amount = data.final_total ;
-            this.orders = data.orders_count ;
-            this.reward = data.reward_amount ;
-            this.profit = data.total_profit ;
-            this.number = data.id ;
+        if (file && allowedTypes.includes(file.type)) {
+            this.visib = true;
+            this.loadPDF(file);
+        } else {
+            alert('Please select a valid PDF file.');
+        }
         },
-        openSettle(data){
-            this.visible = true ;
+        loadPDF(file) {
+        const reader = new FileReader();
 
-            this.amount = data.final_total ;
-            this.orders = data.orders_count ;
-            this.reward = data.reward_amount ;
-            this.profit = data.total_profit ;
-            this.number = data.id ;
-            this.pdf_uploaded = data.image
+        reader.onload = (event) => {
+            const pdfUrl = event.target.result;
+            this.pdfUrl = pdfUrl;
+        };
+
+        reader.readAsDataURL(file);
+        },
+        async settle(){
+            const fd =new FormData(this.$refs.settleForm);
+            this.settleDisabled = true ;
+            
+            await axios.post(`admin/upload-settlement-image/${this.number}`, fd , {
+                headers:{
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                if( res.data.key === 'success' ){
+                    this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
+                    this.settleDisabled = false ;
+                    this.visible = false ;
+                    this.completed_settle = false ;
+                    this.getdelivers();
+                }else{
+                    this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
+                    this.settleDisabled = false ;
+                }
+            } )
+        },
+        openSettle(amount, number){
+            this.visible = true ;
+            this.amount = amount ;
+            this.number = number ;
+        },
+        openCompleted(amount, number, image){
+            this.completed_settle = true ;
+            this.amount = amount ;
+            this.number = number ;
+            this.pdfUrlGetted = image ;
+
+        },
+        // add order 
+        async addNewOrder(){
+            this.addDisabled = true ;
+            const fd = new FormData();
+
+            fd.append('pay_type', this.pay_type);
+            fd.append('delegate_id', this.deliver.delegate_id);
+
+            await axios.post('admin/store-delegate-profits-transactions', fd , {
+                headers:{
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                if( res.data.key === 'success' ){
+                    this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
+                    this.addDisabled = false ;
+                    this.addOrder = false ;
+                }else{
+                    this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
+                    this.addDisabled = false ;
+                }
+            } )
+        },
+        async getdelivers(){
+            await axios.get(`admin/delegate-profits-transactions/${this.$route.params.id}`, {
+                headers:{
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                this.delivers = res.data.data ;
+            } )
         },
           selectButton(button) {
               this.selectedButton = button;
@@ -700,97 +759,25 @@ export default {
             const file = e.target.files[0];
             this.image = URL.createObjectURL(file);
 
-          },
-
-          async getdelivers(){
-            await axios.get(`admin/sales-profits-transactions/${this.$route.params.id}`, {
-                headers:{
-                    Authorization : `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            .then( (res)=>{
-                this.delivers = res.data.data ;
-            } )
-        },
-
-        async settle(){
-            const fd =new FormData(this.$refs.settleForm);
-            this.settleDisabled = true ;
-            
-            await axios.post(`admin/upload-settlement-image/${this.number}`, fd , {
-                headers:{
-                    Authorization : `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            .then( (res)=>{
-                if( res.data.key === 'success' ){
-                    this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
-                    this.settleDisabled = false ;
-                    this.visible = false ;
-                    this.getdelivers();
-                }else{
-                    this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
-                    this.settleDisabled = false ;
-                }
-            } )
-        },
-        async settle_not(){
-            const fd =new FormData(this.$refs.settleForm_not);
-            this.settleDisabled = true ;
-            
-            await axios.post(`admin/update-settlement-profits-settlement/${this.number}`, fd , {
-                headers:{
-                    Authorization : `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            .then( (res)=>{
-                if( res.data.key === 'success' ){
-                    this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
-                    this.settleDisabled = false ;
-                    this.sttle_not = false ;
-                    this.getdelivers();
-                }else{
-                    this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
-                    this.settleDisabled = false ;
-                }
-            } )
-        },
+          }
       },
- 
-    
       mounted(){
-        this.deliver = JSON.parse(localStorage.getItem('deliver'));
-        this.getdelivers();
-        this.currentDate = moment().format('YY-MM-DD')
+          this.deliver = JSON.parse(localStorage.getItem('deliver'));
+
+          this.getdelivers();
+
+          this.currentDate = moment().format('YY-MM-DD')
             this.cuurentTime = moment().format('h:mm:ss A');
       }  
 }
 </script>
 
 
-<style lang="scss">
-.settle_info{
-    background-color: #2D6191;
-    p{
-        color:#fff !important;
-    }
+<style  lang="scss" scoped>
+.avilable_amount{
+    font-size: 40px !important;
 }
-.settle_way{
-    background: #52bfbf;
-    padding: 26px;
-    border-radius: 11px;
-    input{
-        accent-color: #333;
-        width: 16px;
-        height: 16px;
-    }
-    label{
-        background: #e5d9d9;
-        padding: 2px 10px;
-        border-radius: 3px;
-    }
-}
-.current_date{
+    .current_date{
         width: 100%;
         height: 37px;
         border: 1px solid #ccc;
@@ -798,6 +785,26 @@ export default {
         background: #e9ecf0;
         padding-top: 6px;
         padding-right: 10px;
+    }
+    .settle_info2{
+        background: #fff;
+        padding: 26px;
+        border-radius: 11px;
+        border: 10px solid #52bfbf;
+        height: 115px;
+    }
+    .avilable_amount{
+        width: 200px !important;
+        height: 94px !important;
+    }
+    .settle_info3{
+        padding: 0 !important;
+    }
+    .currency{
+        position: absolute;
+        font-size: 24px !important; 
+        left:10px;
+        bottom:10px;
     }
 </style>
 

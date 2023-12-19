@@ -67,7 +67,7 @@
                 </div> -->
 
 
-                <Dialog v-model:visible="visible" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+                <Dialog v-model:visible="visible" modal class="confirm" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                    <div class="success_alert mb-2">
                         <i class="fa-solid fa-check"></i>
                    </div>
@@ -195,9 +195,9 @@ export default {
                     setTimeout(() => {
                         this.visible = true
                     }, 1000);
-                    // setTimeout(() => {
-                    //     this.$router.push('/admin/orders')
-                    // }, 2000);
+                    setTimeout(() => {
+                        this.$router.push('/admin/orders')
+                    }, 5000);
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
                     this.disabled = false;

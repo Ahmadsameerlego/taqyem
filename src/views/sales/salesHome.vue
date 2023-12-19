@@ -171,6 +171,17 @@ export default {
     mounted(){
         this.getDashboard();
         this.userName = JSON.parse(localStorage.getItem('user')).name ;
+
+        localStorage.setItem('owner_name', '');
+        localStorage.setItem('receiver_name', '');
+        localStorage.setItem('receiver_phone', '');
+        localStorage.setItem('category_id', '');
+        localStorage.setItem('products', []);
+        localStorage.setItem('default_products', []);
+        localStorage.setItem('city_id', '');
+        localStorage.setItem('map_url', '');
+        localStorage.setItem('address', '');
+
     }
 }
 </script>

@@ -32,11 +32,18 @@
 
                     <div class="order_body pt-4">
 
-                        <div class="d-flex align-items-center  mb-3" v-for="(single, index) in prod.qty" :key="index">
+                        <div class="position-relative d-flex align-items-center  mb-3" v-for="(single, index) in prod.qty" :key="index">
                             <div class="number_value">
                                 {{ index+1 }}
-                            </div>
-                            <input type="text" class="form-control mx-2" v-model="value1[getDynamicModelKey(prod.id, index)]">
+                            </div>  
+                            <!-- <input type="text" class="form-control mx-2" v-model=""> -->
+
+                            <!-- <input type="text" class="form-control mx-2" v-if="items_geted.length>0"  v-model="items_geted[index]"> -->
+                            <input type="text" class="form-control mx-2"  v-model="value1[getDynamicModelKey(prod.id, index)]" >
+                            <!-- <input type="text" class="abs_values form-control mx-2" v-if="items_geted.length>0"  v-model="items_geted[index]" > -->
+
+                            
+
                         </div>                
                 </div>
             </div>
@@ -62,7 +69,7 @@
                             </div>
                             <div class="d-flex w-50 mx-3 align-items-center mb-3">
                                 <span class="fw-6"> العنوان </span>
-                                <input type="text" class="form-control mx-2" v-model="address">
+                                <input type="text"  class="address form-control mx-2" v-model="address" placeholder="جدة - الفيصلية - شارع أحمد">
                             </div>
                         </div>
                         
@@ -101,15 +108,23 @@ export default {
             selectedCity : null,
             address : '',
             map_url : '',
-            items  : null
+            items  : null,
+            isBacked : false,
+
+            items_geted : []
         }
     },
     components:{
         user
     },
+    watch:{
+        // value1(newValue) {
+        //     newValue = localStorage.getItem('cachedInputValue');
+        // },
+
+    },
     methods:{
         createOrder(){
-            console.log('Total Values:', this.value1);
 
              // Convert the value1 object to the items structure
             const items = Object.keys(this.value1).reduce((acc, key) => {
@@ -118,7 +133,7 @@ export default {
                 acc[productId] = [];
             }
             acc[productId][index] = this.value1[key];
-            return acc;
+                return acc;
             }, {});
 
             // Convert items to the desired JSON structure
@@ -127,12 +142,14 @@ export default {
                 items: items[productId],
             }));
             // Log the items structure
+            localStorage.setItem('cashedItems' , JSON.stringify(this.value1))
 
             this.items = JSON.stringify(jsonStructure) ;
             console.log('Items:', this.items);
 
-
-            localStorage.setItem('items', this.items);
+            // if( this.items_geted.length > 0 ){
+                localStorage.setItem('items', this.items); 
+            // }
             localStorage.setItem('map_url', this.map_url);
             localStorage.setItem('address', this.address);
             localStorage.setItem('city_id', this.selectedCity);
@@ -170,13 +187,57 @@ export default {
 
     },
     mounted(){
-        this.products = JSON.parse(localStorage.getItem('products'));
+        // if()
         this.getCities();
+
+
+        // localStorage.setItem('items', this.items);
+        //     localStorage.setItem('map_url', this.map_url);
+        //     localStorage.setItem('address', this.address);
+        //     localStorage.setItem('city_id', this.selectedCity);
+
+        var products = JSON.parse(localStorage.getItem('products'));
+
+        // if( localStorage.getItem('items') ){
+        //     let geted = JSON.parse(localStorage.getItem('items')) ;
+        //     this.items = geted ;
+        //     for( let i = 0 ; i < geted.length ; i++ ){
+        //         products[i].id = geted[i].product_id ;
+        //         products[i].qty = geted[i].items.length ;
+        //         console.log(products[i].qty)
+
+        //     }
+        //     // products.length = geted.length ;
+
+        // }else{
+            this.products = products
+        // }
+        if( localStorage.getItem('map_url') ){
+            this.map_url = localStorage.getItem('map_url')
+        }
+        if( localStorage.getItem('address') ){
+            this.address = localStorage.getItem('address')
+        }
+        if( localStorage.getItem('city_id') ){
+            this.selectedCity = localStorage.getItem('city_id');
+            
+        }
+
+        if(localStorage.getItem('cashedItems')){
+            this.value1= JSON.parse( localStorage.getItem('cashedItems') )  ;
+        }
     }
 }
 </script>
 
 <style  lang="scss">
+    .abs_values{
+            position: absolute;
+            right:-10px;
+    }
+    .address::placeholder{
+        color:#ccc !important;
+    }
     .order_body{
         background-color: #35BFBF;
         border-radius: 4px;

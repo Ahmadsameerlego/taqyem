@@ -6,7 +6,7 @@
                 <router-link to="/notification" class="flex_center h-100">
                     <i class="fa-solid fa-bell"></i>
                     <span class="counter">
-                        1
+                        {{ count }}
                     </span>
                 </router-link>
             </div>
@@ -29,10 +29,12 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data(){
         return{
-            user_name : ''
+            user_name : '',
+            count : ''
         }
     },
     methods:{
@@ -40,10 +42,22 @@ export default {
             document.querySelector('#sidebar').classList.toggle('active');
             document.querySelector('#header').classList.toggle('active');
             document.querySelector('#content').classList.toggle('active');
+        },
+        async getNotCount(){
+            await axios.get('notifications-count', {
+                headers : {
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                this.count = res.data.data.count ;
+            } )
         }
     },
     mounted(){
-        this.user_name = JSON.parse(localStorage.getItem('user')).name
+        this.user_name = JSON.parse(localStorage.getItem('user')).name;
+
+        this.getNotCount()
     }
 }
 </script>

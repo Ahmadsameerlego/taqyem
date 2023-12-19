@@ -8,10 +8,10 @@
             <div class="interactions position-relative d-flex justify-content-between align-items-center mt-5 mb-4">
                 <!-- filter  -->
                 <div class="">
-                    <button class="btn main_btn" @click="toggleMenu">
+                    <!-- <button class="btn main_btn" @click="toggleMenu">
                         <i class="fa-solid fa-filter"></i>
                         تصفية
-                    </button>
+                    </button> -->
 
 
                     <!-- filter content  -->
@@ -99,11 +99,21 @@
                     <Column field="total_debit" header="المبلغ الاجمالي"></Column>
                     <Column  header="الحالة">
                         <template #body="slotProps">
-                            <button class="btn br-20 px-4 btn-danger" v-if="slotProps.data.status =='zero' ">
-                                <router-link to="/admin/single/1">
+                            <button class="btn br-20 px-4 btn-danger" v-if="slotProps.data.status =='zero' ||slotProps.data.status =='not_completed'">
+                                <router-link @click="storeDate(slotProps.data.date, slotProps.data.day, slotProps.data.date_hejri )" to="/admin/single/">
                                     لم تتم التسوية
                                 </router-link>
                             </button>                        
+                            <button class="btn br-20 px-4 complete" v-if="slotProps.data.status =='completed' ">
+                                <router-link to="/admin/single" @click="storeDate(slotProps.data.date, slotProps.data.day, slotProps.data.date_hejri )">
+                                    تمت التسوية
+                                </router-link>
+                            </button>                        
+                            <!-- <button class="btn br-20 px-4 not_completed" v-if="slotProps.data.status =='not_completed' ">
+                                <router-link to="/admin/single" @click="storeDate(slotProps.data.date, slotProps.data.day, slotProps.data.date_hejri )">
+                                    غير مكتملة
+                                </router-link>
+                            </button>                         -->
                         </template>
                     </Column>
                     
@@ -145,6 +155,11 @@ export default {
       },
 
       methods:{
+        storeDate(date , day , hejri){
+            localStorage.setItem('settle_date',date );
+            localStorage.setItem('settle_day',day );
+            localStorage.setItem('settle_hejri',hejri );
+        },
           selectButton(button) {
               this.selectedButton = button;
               
@@ -177,5 +192,12 @@ export default {
 </script>
 
 <style lang="scss">
-   
+    .complete{
+        background-color: #1ABC73 !important;
+        color: #fff !important;
+    }
+    .not_completed{
+        background-color: #B68E26 !important;
+        color: #fff !important;
+    }
 </style>

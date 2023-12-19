@@ -133,6 +133,13 @@
                             <img :src="require('@/assets/imgs/Mada-01 1.png')" alt="">
                         </span>                         -->
                         <span class="pay_undefined" v-if="slotProps.data.pay_status=='undefined'"></span>
+
+                        <span v-if="slotProps.data.pay_type=='cash'" style="    margin-right: 34px;">
+                            نقدي
+                        </span>
+                        <span v-if="slotProps.data.pay_type=='online'" style="    margin-right: 34px;">
+                            <img :src="require('@/assets/imgs/Mada-01 1.png')" alt="">
+                        </span>
                         <!-- <span v-if="false">{{slotProps.data.image}}</span> -->
                     </template>
                 </Column>
@@ -218,6 +225,16 @@ export default {
     },
     mounted() {
         this.getOrders();
+        localStorage.setItem('owner_name', '');
+        localStorage.setItem('receiver_name', '');
+        localStorage.setItem('receiver_phone', '');
+        localStorage.setItem('category_id', '');
+        localStorage.setItem('proudcts', []);
+        localStorage.setItem('default_products', []);
+
+        localStorage.setItem('city_id', '');
+        localStorage.setItem('map_url', '');
+        localStorage.setItem('address', '');
     }
 
 }

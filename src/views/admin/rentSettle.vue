@@ -18,10 +18,10 @@
             <div class="interactions position-relative d-flex justify-content-between align-items-center mt-5 mb-4">
                 <!-- filter  -->
                 <div class="">
-                    <button class="btn main_btn" @click="toggleMenu">
+                    <!-- <button class="btn main_btn" @click="toggleMenu">
                         <i class="fa-solid fa-filter"></i>
                         تصفية
-                    </button>
+                    </button> -->
 
 
                     <!-- filter content  -->
@@ -97,22 +97,52 @@
             <!-- table  -->
             <div class="card card_table" >
                 <DataTable 
-                    :value="transactions" 
+                    :value="transactions_selling" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
                     v-model:filters="filters"
                     ref="dt"
+                    v-if="sales"
                 >
-                    <Column field="day" header="الاسم"></Column>
-                    <Column field="date" header="الطلبات المكتملة"></Column>
+                    <Column field="delegate_name" header="الاسم"></Column>
+                    <Column field="completed_count" header="الطلبات المكتملة"></Column>
                     <Column  header="الحالة">
                         <template #body="slotProps">
-                            <button class="btn br-20 px-4 btn-danger" v-if="slotProps.data.status =='zero' ">
-                                <router-link to="/admin/singleRent/1">
-                                    لم تتم التسوية
+                            <button class="btn br-20 px-4 main_btn" >
+                                <router-link :to="'/admin/singleRent/'+slotProps.data.delegate_id" @click="storeDeliver(slotProps.data )">
+                                    التفاصيل
                                 </router-link>
-                            </button>                        
+                                
+                            </button>  
+                            <div v-if="!slotProps"></div>                      
+                        </template>
+                    </Column>
+                    
+
+
+                    
+                </DataTable>
+
+                <DataTable 
+                    :value="transactions_deliver" 
+                    paginator :rows="5" 
+                    :rowsPerPageOptions="[5, 10, 20, 50]"   
+                    tableStyle="min-width: 50rem"
+                    v-model:filters="filters"
+                    ref="dt"
+                    v-if="deliver"
+                >
+                    <Column field="delegate_name" header="الاسم"></Column>
+                    <Column field="completed_count" header="الطلبات المكتملة"></Column>
+                    <Column  header="الحالة">
+                        <template #body="slotProps">
+                            <button class="btn br-20 px-4 main_btn" >
+                                <router-link :to="'/admin/rentDeliver/'+slotProps.data.delegate_id" @click="storeDeliver(slotProps.data )">
+                                    التفاصيل
+                                </router-link>
+                            </button>  
+                            <div v-if="!slotProps"></div>                      
                         </template>
                     </Column>
                     
@@ -150,13 +180,29 @@ export default {
                   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
               },
               transactions : [],
-              selectedButton : ''
+              selectedButton : 'new',
+              sales : true ,
+              deliver : false,
+              transactions_deliver : [],
+              transactions_selling :[]
           }
       },
 
       methods:{
+        storeDeliver(deliver){
+            localStorage.setItem('deliver', JSON.stringify(deliver))
+        },
           selectButton(button) {
               this.selectedButton = button;
+              if( this.selectedButton == 'new' ){
+                this.sales = true ;
+                this.deliver = false ;
+                this.getSettleSelling();
+              }else if( this.selectedButton == 'still' ){
+                this.sales = false ;
+                this.deliver = true ;
+                this.getSettleDeliver();
+              }
               
           },
           exportCSV() {
@@ -169,19 +215,44 @@ export default {
               this.$refs.filterContent.classList.remove('active')
           },
 
-          async getSettle(){
-            await axios.get('admin/financial-transactions', {
-                headers : {
-                    Authorization : `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            .then( (res)=>{
-                this.transactions = res.data.data.transactions ;
-            } )
-          }
+        //   async getSettle(){
+        //     await axios.get('admin/financial-transactions', {
+        //         headers : {
+        //             Authorization : `Bearer ${localStorage.getItem('token')}`
+        //         }
+        //     })
+        //     .then( (res)=>{
+        //         this.transactions = res.data.data.transactions ;
+        //     } )
+        //   },
+
+
+        //   deliver 
+        async getSettleDeliver(){
+        await axios.get('admin/delegate-profits-transactions', {
+            headers : {
+                Authorization : `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then( (res)=>{
+            this.transactions_deliver = res.data.data ;
+        } )
+        },
+        // selling 
+        async getSettleSelling(){
+        await axios.get('admin/sales-profits-transactions', {
+            headers : {
+                Authorization : `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then( (res)=>{
+            this.transactions_selling = res.data.data ;
+        } )
+        },
       },
       mounted(){
-        this.getSettle();
+        // this.getSettle();
+        this.getSettleSelling();
       }  
 }
 </script>

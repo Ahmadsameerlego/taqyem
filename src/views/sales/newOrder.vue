@@ -27,7 +27,7 @@
         <div class="card_order px-5 pt-3 pb-4">
             <div class="row">
 
-                <div class="col-md-4 mb-3" v-for="(product, index) in products" :key="product.id">
+                <div class="col-md-3 mb-3" v-for="(product, index) in products" :key="product.id">
                     <!-- single product  -->
                     <div class="single_product position-relative">
 
@@ -165,7 +165,7 @@ export default {
                         id: id,
                         name: name,
                         qty: 1,
-                        totalPrice: price // Initialize total price based on quantity and price
+                        totalPrice: parseFloat(price)  // Initialize total price based on quantity and price
                     });
                 }
 
@@ -173,13 +173,42 @@ export default {
                 this.products[index].qty -= 1;
             }
         },
-        removeItem(index){
-            this.added_products.splice(index ,1);
+        removeItem(index) {
+            const removedProduct = this.added_products[index];
+
+            // Find the corresponding product in the products array
+            const correspondingProduct = this.products.find(product => product.id === removedProduct.id);
+
+            // Increase the quantity of the corresponding product by the removed quantity
+            correspondingProduct.qty += 1;
+
+            // Decrease the quantity of the removed product in added_products array
+            this.added_products[index].qty -= 1;
+
+            // Recalculate totalPrice for the removed item
+            this.added_products[index].totalPrice = this.added_products[index].qty * correspondingProduct.price;
+
+            // If the quantity becomes zero, remove the item from added_products array
+            if (this.added_products[index].qty === 0) {
+                this.added_products.splice(index, 1);
+            }
+
+            // Recalculate the total totalPrice for all items
+            this.calculateTotalPrice();
+
+            console.log(this.products)
+        },
+
+        calculateTotalPrice() {
+            this.totalPrice = this.added_products.reduce((total, product) => total + product.totalPrice, 0);
         },
 
         storeProucts(){
+            this.calculateTotalPrice();
             localStorage.setItem('products', JSON.stringify(this.added_products));
             localStorage.setItem('totalPrice', this.totalPrice);
+
+            localStorage.setItem('default_products', JSON.stringify(this.products))
         }
 
         
@@ -187,11 +216,31 @@ export default {
 
     },
     mounted(){
-        this.getProducts()  
+        
+
+        if( localStorage.getItem('products') ){
+            this.added_products = JSON.parse(localStorage.getItem('products')) ;
+
+        }
+        if(localStorage.getItem('totalPrice')){
+            this.totalPrice = localStorage.getItem('totalPrice')
+        }
+
+        if(localStorage.getItem('default_products').length>0){
+            this.products = JSON.parse(localStorage.getItem('default_products'))
+        }else{
+            this.getProducts()  ;
+        }
     }
 }
 </script>
 
+
+<style scoped>
+    .text-center{
+        width: 145px;
+    }
+</style>
 <style lang="scss">
     .add_btn{
         position:absolute;
@@ -219,10 +268,14 @@ export default {
     .single_product{
         border: 1px solid #333;
         border-radius: 25px;
+        height: 270px;
         .prodcut_img{
             width:100%;
+            height: 165px;
             img{
                 width:100%;
+                height: 100%;
+                object-fit: cover;
                 border-radius: 25px;
             }
         }

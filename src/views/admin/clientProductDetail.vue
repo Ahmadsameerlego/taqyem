@@ -76,8 +76,13 @@
                         </span>
                         <i class="fas fa-star-of-life text-danger" style="font-size:10px;"></i> 
                     </div>
-                    <select name="" class="form-select " id="" v-model="selectedDelegate">
+                    <!-- <select name="" class="form-select " id="" v-model="selectedDelegate">
                         <option value="" selected hidden disabled> اختر الموصل </option>
+                        <option :value="delegate.id" v-for="delegate in delegates" :key="delegate.id"> {{ delegate.name }} </option>
+                    </select> -->
+
+                    <select name="" class="form-select " id="" v-model="selectedDelegate" >
+                        <option value="" selected hidden disabled>{{ delegate_name }} </option>
                         <option :value="delegate.id" v-for="delegate in delegates" :key="delegate.id"> {{ delegate.name }} </option>
                     </select>
                 </div>
@@ -116,6 +121,7 @@ export default {
 
             sended_value : [],
             
+            delegate_name : ''
         }
     },
     components:{
@@ -135,6 +141,13 @@ export default {
                 this.address = response.address ;
                 this.map_url = response.map_url ;
                 this.cities = response.cities ;
+                this.delegates = response.delegates ;
+                for( let i = 0 ; i < this.delegates.length ; i++ ){
+                    if( this.delegates[i].status === true ){
+                        this.selectedDelegate = this.delegates[i].id ;
+                        this.delegate_name = this.delegates[i].name ;
+                    }
+                }
 
                 for( let i = 0 ; i < this.cities.length ; i++ ){
                     if( this.cities[i].status === true ){
@@ -153,12 +166,12 @@ export default {
         },
 
 
-        async getDelegates(){
-            await axios.get('delegates')
-            .then( (res)=>{
-                this.delegates = res.data.data ;
-            } )
-        },
+        // async getDelegates(){
+        //     await axios.get('delegates')
+        //     .then( (res)=>{
+        //         this.delegates = res.data.data ;
+        //     } )
+        // },
 
         createOrder(){
             for( let i = 0 ; i < this.products.length ; i++ ){
@@ -193,7 +206,7 @@ export default {
     },
     mounted(){
         this.getInfo();
-        this.getDelegates();
+        // this.getDelegates();
     }
 }
 </script>
