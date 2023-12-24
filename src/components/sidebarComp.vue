@@ -2,7 +2,7 @@
   <section id="sidebar">
         <!-- side header  -->
         <div class="side_header">
-            <img :src="require('@/assets/imgs/logo.png')" alt="">
+            <img :src="require('@/assets/imgs/Artboard 5.svg')" alt="" style="    mix-blend-mode: darken;">
         </div>
         <!-- nav bar  -->
         <nav class="nav mt-3 mx-4">

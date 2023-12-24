@@ -140,7 +140,7 @@
                                     مكتمل
                             </button>  
                             <!-- still  -->
-                            <button class="btn btn_still br-20 px-4 " v-if="slotProps.data.status=='pending'">
+                            <button class="btn btn_still br-20 px-4 " v-if="slotProps.data.status=='not_completed'">
                                     جاري المعالجة
                             </button>     
                             <!-- not          -->
@@ -163,6 +163,10 @@
 
                             <!-- done  -->
                             <button class="btn main_btn br-20 px-4 " @click="openSettle(slotProps.data)" v-if="slotProps.data.status=='completed'||slotProps.data.status=='pending'">
+                                    تفاصيل
+                            </button>  
+                            <!-- done  -->
+                            <button class="btn main_btn br-20 px-4 " @click="openNotCompleted(slotProps.data)" v-if="slotProps.data.status=='not_completed'">
                                     تفاصيل
                             </button>  
 
@@ -265,7 +269,7 @@
                         </div>
                         <div>
                             <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                            <p> الايبان  /  SA{{ deliver.iban_num }}</p>
                         </div>
                     </div>
                 </div>
@@ -278,7 +282,11 @@
 
                     <div class="uploadImage" >
                         <div  class="pdfPreview">
-                        <iframe :src="pdf_uploaded" width="100%" height="400px"></iframe>
+                        <!-- <iframe :src="pdf_uploaded" width="100%" height="400px"></iframe> -->
+                        <!-- <embed :src="pdf_uploaded" type="application/pdf" width="100%" height="400px" /> -->
+                        <!-- <object :data="pdf_uploaded" type="application/pdf" width="100%" height="400px"></object> -->
+                        <a :href="pdf_uploaded" target="_blank" class="d-flex text-center flex_center" style="text-decoration:underline">افتح التسوية</a>
+
                         </div>
                     </div>
                 </div>
@@ -292,12 +300,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="1">
+                                    <input type="radio" :checked="settle_pay_type=='cash'" disabled v-model="pay_type" name="pay_type" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="2">
+                                    <input type="radio" :checked="settle_pay_type=='online'" disabled v-model="pay_type" name="pay_type" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -381,7 +389,7 @@
                         </div>
                         <div>
                             <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                            <p> الايبان  /  SA{{ deliver.iban_num }}</p>
                         </div>
                     </div>
                 </div>
@@ -390,28 +398,7 @@
 
 
 
-                <div class="col-md-12 mb-2">
-                    <div class="upload position-relative">
-
-                        <div class="upload_content">
-                            <div>
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                            </div>
-                            
-                            <div>
-                                <h6> ارفع  </h6>
-                            </div>
-                        </div>
-
-                        <input type="file" name="image" class="inputFile" @change="uploadPDF">
-                    </div>
-
-                    <div class="uploadImage" v-if="visib">
-                        <div v-if="pdfUrl" class="pdfPreview">
-                        <iframe :src="pdfUrl" width="100%" height="400px"></iframe>
-                        </div>
-                    </div>
-                </div>
+               
 
 
                 <div class="col-md-12 mb-3">
@@ -445,6 +432,140 @@
             </div>
        </form>
     </Dialog>
+
+
+    <Dialog v-model:visible="sttle_not_completed" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+       <h6 class="text-center fw-bold mb-2"> انشاء طلب </h6>
+       <p class="fw-bold"> تفاصيل طلب التسوية </p>
+       <form ref="settleForm_not">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> العمولة </label>
+                        <input type="number" class="form-control" name="total_profit"  disabled v-model="profit">
+                        
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> عدد الطلبات </label>
+                        <input type="number" class="form-control" disabled v-model="orders">
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> قيمة المكافأة </label>
+                        <input type="number" class="form-control" name="reward_amount" disabled v-model="reward">
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> الاجمالي </label>
+                        <input type="number" class="form-control" name="" disabled v-model="amount">
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <div class="form-group">
+                        <label for=""> رقم الطلب </label>
+                        <input type="number" class="form-control" disabled v-model="number">
+                    </div>
+                </div>
+                
+
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> تاريخ اجراء الطلب </label>
+                        <!-- <input type="date" class="form-control" v-model="currentDate"> -->
+                        <div class="current_date">
+                            {{ currentDate }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <div class="form-group">
+                        <label for=""> وقت اجراء الطلب</label>
+                        <!-- <input type="time" class="form-control" v-model="currentTime"> -->
+                        <div class="current_date">
+                            {{ cuurentTime }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mb-4 mt-4">
+                    <div class="d-flex justify-content-between px-4 pt-4 pb-4 settle_info">
+                        <div>
+                            <p > اسم البنك / {{ deliver.bank_name }} </p>
+                            <p> صاحب الحساب / {{ deliver.account_owner_name }} </p>
+                        </div>
+                        <div>
+                            <p > رقم الحساب / {{ deliver.account_num }} </p>
+                            <p> الايبان  / SA {{ deliver.iban_num }}</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="col-md-12 mb-2">
+                    <div class="upload position-relative">
+
+                        <div class="upload_content">
+                            <div>
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            
+                            <div>
+                                <h6> ارفع  </h6>
+                            </div>
+                        </div>
+
+                        <input type="file" name="image" class="inputFile" @change="uploadPDF">
+                    </div>
+
+                    <div class="uploadImage" v-if="visib">
+                        <div v-if="pdfUrl" class="pdfPreview">
+                        <iframe :src="pdfUrl" width="100%" height="400px"></iframe>
+                        </div>
+                    </div>
+                </div>
+               
+
+
+                <div class="col-md-12 mb-3">
+                    <div class="d-flex justify-content-between">
+
+                        <div class="form-group">
+                            <p class="fw-bold">طريقة التسوية</p>
+
+                            <div class="settle_way d-flex">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" :checked="settle_pay_type=='cash'" v-model="pay_type" name="pay_type" value="1">
+                                    <label for="" class="mx-3"> نقدى </label>
+                                </div>
+
+                                <div class="d-flex align-items-center mx-5">
+                                    <input type="radio" :checked="settle_pay_type=='online'" v-model="pay_type" name="pay_type" value="2">
+                                    <label for="" class="mx-3"> تحويل </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="flex_center mt-4">
+                <button class="btn main_btn px-5" :disabled="settleDisabled" @click.prevent="settle_not"> حفظ </button>
+            </div>
+       </form>
+    </Dialog>
+
+
     <Toast />
 
 
@@ -511,7 +632,7 @@
                         </div>
                         <div>
                             <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                            <p> الايبان  /  SA{{ deliver.iban_num }}</p>
                         </div>
                     </div>
                 </div>
@@ -607,7 +728,9 @@ export default {
               settleDisabled : false,
               sttle_not : false,
               pdfUrl: null,
-              pdf_uploaded : ''
+              pdf_uploaded : '',
+              sttle_not_completed : false,
+              settle_pay_type : ''
 
               
           }
@@ -681,6 +804,17 @@ export default {
             this.profit = data.total_profit ;
             this.number = data.id ;
             this.pdf_uploaded = data.image
+            this.settle_pay_type = data.pay_type
+        },
+        openNotCompleted(data){
+            this.sttle_not_completed = true ;
+            this.amount = data.final_total ;
+            this.orders = data.orders_count ;
+            this.reward = data.reward_amount ;
+            this.profit = data.total_profit ;
+            this.number = data.id ;
+            this.pdf_uploaded = data.image;
+            this.settle_pay_type = data.pay_type
         },
           selectButton(button) {
               this.selectedButton = button;
@@ -748,6 +882,7 @@ export default {
                     this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
                     this.settleDisabled = false ;
                     this.sttle_not = false ;
+                    this.sttle_not_completed = false ;
                     this.getdelivers();
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });

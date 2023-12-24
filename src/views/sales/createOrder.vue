@@ -52,7 +52,7 @@
                         <div class="form-group position-relative">
                             <div class="position-relative">
                                 <label for="" class="mb-1 fw-6"> رقم جوال المستلم  </label>
-                                <input type="number" class="form-control" name="" id="" v-model="receiver_phone" min="9" max="10" @input="handleInput">
+                                <input type="number" class="form-control" name="" id="" v-model="receiver_phone" min="9" max="10" >
                                 <select name="" class="number form-control" id="">
                                     <option value="">+996 </option>
                                 </select>
@@ -130,7 +130,7 @@ export default {
     watch:{ 
         receiver_phone(){
             const receiverPhoneString = String(this.receiver_phone);
-            if(receiverPhoneString.length < 9 || receiverPhoneString.length > 10 ){
+            if(receiverPhoneString.length < 9 || receiverPhoneString.length > 11 ){
                 this.isPhoneValid = true ;
             }else{
                 this.isPhoneValid = false ;

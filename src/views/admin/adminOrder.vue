@@ -107,7 +107,7 @@
 
                 <!-- new table  -->
                 <DataTable 
-                    :value="new_products" 
+                    :value="new_products.reverse()" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -132,12 +132,17 @@
 
                     <Column >
                         <template #body="slotProps">
-                            <button class="main_btn btn br-20 px-4 pt-2 pb-2" @click.prevent="acceptOrder(slotProps.data.id)">
+                           
+
+                            <button class="btn-primary mx-2 btn br-20 px-4 pt-2 pb-2" @click.prevent="acceptOrder(slotProps.data.id)">
                                 قبول
                             </button>                           
                             <button class="btn-danger mx-2 btn br-20 px-4 pt-2 pb-2" @click.prevent="deleteOrder(slotProps.data.id)">
                                 حذف
-                            </button>                           
+                            </button> 
+                            <router-link class="main_btn br-20 px-4 pt-1 pb-1" :to="'/showOrderClient/'+slotProps.data.id">
+                                تفاصيل
+                            </router-link>                            
                             <span v-if="false">{{slotProps.data.image}}</span>
                         </template>
                     </Column>
@@ -148,7 +153,7 @@
 
                 <!-- in progress table  -->
                 <DataTable 
-                    :value="in_products" 
+                    :value="in_products.reverse()" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -187,7 +192,7 @@
 
                  <!-- in deliver table  -->
                 <DataTable 
-                    :value="in_deliver" 
+                    :value="in_deliver.reverse()" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -252,7 +257,7 @@
 
                 <!-- complete table  -->
                 <DataTable 
-                    :value="completes" 
+                    :value="completes.reverse()" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -292,7 +297,7 @@
 
                 <!-- refused table  -->
                 <DataTable 
-                    :value="refuseds" 
+                    :value="refuseds.reverse()" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"

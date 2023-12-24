@@ -128,7 +128,7 @@
                             <div class="settle_done d-flex justify-content-between align-items-center" v-if="slotProps.data.status=='completed'">
                                 <div>
                                     <span class="fw-bold"> مبلغ التسوية </span>
-                                    <span class="fw-bold"> {{ slotProps.data.settlement_paid_amount }} ريال </span>
+                                    <span class="fw-bold"> {{ slotProps.data.total_settlement }} ريال </span>
                                 </div>
                                 <div>
                                     <span class="fw-bold"> تمت التسوية  </span>
@@ -152,12 +152,12 @@
                             <div class="d-flex justify-content-between align-items-center" v-if="slotProps.data.status=='zero'">
                                 <div>
                                     <div class="fw-bold" style="font-size:20px"> النقد </div>
-                                    <div class="fw-bold"> {{ slotProps.data.settlement_paid_amount }} ريال </div>
+                                    <div class="fw-bold"> {{ slotProps.data.total_cash }} ريال </div>
                                 </div>
                                 
                                 <div>
                                     <div class="fw-bold" style="font-size:20px"> مدى </div>
-                                    <div class="fw-bold">  {{ slotProps.data.total_debit }} ريال  </div>
+                                    <div class="fw-bold">  {{ slotProps.data.total_online }} ريال  </div>
                                 </div>
                             </div>
 
@@ -175,11 +175,11 @@
                                     تفاصيل
                             </button>  
                             <!-- still  -->
-                            <button class="btn btn_still br-20 px-4 " @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount , slotProps.data.total_cash , slotProps.data.total_online)" v-if="slotProps.data.status=='not_completed'">
+                            <button class="btn btn_still br-20 px-4 " @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount , slotProps.data.remind_cash ,slotProps.data.remind_online , slotProps.data.remind_returns  , slotProps.data)" v-if="slotProps.data.status=='not_completed'">
                                     تفاصيل
                             </button>     
                             <!-- not          -->
-                            <button class="btn br-20 px-4 btn-danger" @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount)" v-if="slotProps.data.status=='zero'">
+                            <button class="btn br-20 px-4 btn-danger" @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount , slotProps.data.remind_cash ,slotProps.data.remind_online , slotProps.data.remind_returns , slotProps.data)" v-if="slotProps.data.status=='zero'">
                                     تسوية
                             </button>
                             <span v-if="false">{{slotProps.data.image}}</span>
@@ -224,7 +224,7 @@
                 <div class="col-md-12 mb-2">
                     <div class="form-group">
                         <label for=""> المسترجع </label>
-                        <input type="number" class="form-control" v-model="returns_count">
+                        <input type="number" class="form-control" v-model="settle_data.returns_count" >
                     </div>
                 </div>
                 <div class="col-md-12 mb-3">
@@ -274,7 +274,7 @@
                 <div class="col-md-6 mb-2">
                     <div class="form-group">
                         <label for=""> نقدي </label>
-                        <input type="number" class="form-control" v-model="settle_data.settlement_cash" disabled>
+                        <input type="number" class="form-control" v-model="settle_data.total_cash" disabled>
                         <span class="mt-2">
                             متبقي {{ remind }} ريال
                         </span>
@@ -283,7 +283,7 @@
                 <div class="col-md-6 mb-2">
                     <div class="form-group">
                         <label for=""> مدى </label>
-                        <input type="number" class="form-control" disabled v-model="settle_data.settlement_online">
+                        <input type="number" class="form-control" disabled v-model="settle_data.total_online">
                     </div>
                 </div>
                 <div class="col-md-12 mb-2">
@@ -316,7 +316,11 @@
                     </div> -->
 
                     <div class="uploadImage" >
-                        <img :src="settle_data.settlement_image" alt="">
+                        <div v-for="(settlement_image, index) in settle_data.settlement_image" :key="index">
+                            <a :href="settlement_image" target="_blank" class="d-flex text-center flex_center" style="text-decoration:underline">افتح التسوية رقم {{ index+1 }}</a>
+
+                        </div>
+
                     </div>
                 </div>
                 
@@ -375,7 +379,7 @@ export default {
               date_sended : '',
               remind : 0,
               paid_amount : '',
-              returns_count : '',
+              returns_count : 0,
               notes : '',
 
               disabled : false,
@@ -403,7 +407,7 @@ export default {
             const fd = new FormData(this.$refs.settleForm);
             fd.append('cash_amount', this.paid_amount);
             fd.append('online_amount', this.total_online);
-            fd.append('returns_count', this.returns_count);
+            fd.append('returns_count', this.settle_data.returns_count);
             fd.append('notes', this.notes);
             fd.append('delegate_id', this.delegate_id);
             fd.append('date', moment(this.date_sended).format('YY-MM-DD'));
@@ -423,13 +427,14 @@ export default {
                     this.visible = false ;
 
                     this.getSettle();
+                    this.pdfUrl = '';
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
                     this.disabled = false ;
                 }
             } )
         },
-        openSettle(id  , date , settlement_paid_amount , total_cash , total_debit){
+        openSettle(id  , date , settlement_paid_amount , total_cash , total_debit , remind_returns  , settle_date){
             this.visible = true ;
             this.delegate_id = id ;
             this.amount = total_cash;
@@ -437,14 +442,20 @@ export default {
             this.date_sended = date ;
 
 
-            this.remind = total_cash ;
 
             console.log(settlement_paid_amount)
-            console.log(this.remind)
+            console.log(remind_returns)
             this.paid_amount = total_cash ;
 
             this.total_online = total_debit ;
 
+            // this.remind = remind ;
+
+            // this.remind_returns = remind_returns ;
+
+
+            this.settle_data = settle_date ;
+            // console.log(this.remind_returns)
             
 
 
@@ -456,7 +467,7 @@ export default {
 
             console.log(settle_date)
             console.log(this.settle_data)
-
+            this.returns_count = settle_date.remind_returns ;
             // this.getCompetedSettle(settle_id)
 
         },

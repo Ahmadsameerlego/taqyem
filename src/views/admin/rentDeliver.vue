@@ -131,7 +131,7 @@
                     <Column field="pay_type" header="طريقة التسوية"></Column>
                     <Column  header="حالة الطلب" >
                         <template #body="slotProps">
-                            <span v-if="slotProps.data.status=='pending'" class="still"> {{ slotProps.data.status_text }} </span>
+                            <span v-if="slotProps.data.status=='pending'" class="still">جاري المعالجة </span>
                             <span v-if="slotProps.data.status=='completed'" class="complete"> {{ slotProps.data.status_text }} </span>
                         </template>
                     </Column>
@@ -143,7 +143,7 @@
                             <button class="btn main_btn br-20 px-4 " @click="openSettle(slotProps.data.final_total ,  slotProps.data.id )" v-if="slotProps.data.status=='pending'">
                                     تفاصيل
                             </button>  
-                            <button class="btn main_btn br-20 px-4 " @click="openCompleted(slotProps.data.final_total ,  slotProps.data.id , slotProps.data.image)" v-if="slotProps.data.status=='completed'">
+                            <button class="btn main_btn br-20 px-4 " @click="openCompleted(slotProps.data.final_total ,  slotProps.data.id , slotProps.data.image , slotProps.data.pay_type)" v-if="slotProps.data.status=='completed'">
                                     تفاصيل
                             </button>  
                             <!-- still  -->
@@ -214,7 +214,7 @@
                         </div>
                         <div>
                             <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                            <p> الايبان  /  SA {{ deliver.iban_num }}</p>
                         </div>
                     </div>
                 </div>
@@ -251,12 +251,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="1">
+                                    <input type="radio" v-model="pay_type2"  :checked="pay_type_settle='cash'"  name="pay_type2" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="2">
+                                    <input type="radio" v-model="pay_type2" :checked="pay_type_settle='online'"   name="pay_type2" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -330,7 +330,7 @@
                         </div>
                         <div>
                             <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                            <p> الايبان  / SA {{ deliver.iban_num }}</p>
                         </div>
                     </div>
                 </div>
@@ -353,7 +353,9 @@
 
                     <div class="uploadImage">
                         <!-- <div v-if="pdfUrl" class="pdfPreview"> -->
-                        <iframe :src="pdfUrlGetted" width="100%" height="400px"></iframe>
+                        <!-- <iframe :src="pdfUrlGetted" width="100%" height="400px"></iframe> -->
+                        <a :href="pdfUrlGetted" target="_blank" class="d-flex text-center flex_center" style="text-decoration:underline">افتح التسوية</a>
+
                         <!-- </div> -->
                     </div>
                 </div>
@@ -367,12 +369,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="1">
+                                    <input type="radio" :checked="pay_type_settle='cash'" v-model="pay_type2" name="pay_type2" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio" v-model="pay_type2" name="pay_type2" value="2">
+                                    <input type="radio"  :checked="pay_type_settle='online'" v-model="pay_type2" name="pay_type2" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -449,7 +451,7 @@
                         </div>
                         <div>
                             <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                            <p> الايبان  / SA {{ deliver.iban_num }}</p>
                         </div>
                     </div>
                 </div>
@@ -510,7 +512,7 @@
                         </div>
                         <div>
                             <p > رقم الحساب / {{ deliver.account_num }} </p>
-                            <p> الايبان  /  {{ deliver.iban_num }}</p>
+                            <p> الايبان  / SA {{ deliver.iban_num }}</p>
                         </div>
                     </div>
                 </div>
@@ -619,7 +621,8 @@ export default {
               settle_id : '',
               pdfUrl: null,
               completed_settle : false,
-              pdfUrlGetted : ''
+              pdfUrlGetted : '',
+              pay_type_settle : ''
 
           }
       },
@@ -700,11 +703,12 @@ export default {
             this.amount = amount ;
             this.number = number ;
         },
-        openCompleted(amount, number, image){
+        openCompleted(amount, number, image, type){
             this.completed_settle = true ;
             this.amount = amount ;
             this.number = number ;
             this.pdfUrlGetted = image ;
+            this.pay_type_settle = type
 
         },
         // add order 
@@ -725,6 +729,8 @@ export default {
                     this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
                     this.addDisabled = false ;
                     this.addOrder = false ;
+                    this.getdelivers();
+
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
                     this.addDisabled = false ;

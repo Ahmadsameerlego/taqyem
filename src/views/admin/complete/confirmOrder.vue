@@ -146,10 +146,28 @@ export default {
             } )
         },
 
-        removeValue(index, id,value_index){
-            this.products[index].values.splice(value_index, 1)
-            // console.log(id)
-            this.deleted_ids.push(id);
+        async  removeValue(index, id,value_index){
+            const fd = new FormData();
+            await axios.post(`admin/orders/${id}/delete-value?_method=delete`, fd , {
+                headers:{
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                if( res.data.key == 'success' ){
+                    this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
+
+                    this.products[index].values.splice(value_index, 1)
+                    // console.log(id)
+                    this.deleted_ids.push(id);
+
+                    this.getInfo();
+                }else{
+                    this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
+
+                }
+            } )
+            
         },
 
         // getDynamicModelKey(productId, index) {

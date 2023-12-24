@@ -13,7 +13,7 @@
             <h5 class="text-center"> تفاصيل الطلب </h5>
 
             <!-- single order  -->
-            <div class="sinle_ordered mb-3" v-for="(prod, value) in products" :key="prod.id">
+            <div class="sinle_ordered mb-3" v-for="(prod) in products" :key="prod.id">
 
                    <div v-if="prod.values.length>0">
                     <p class="fw-6 mb-1"> {{ prod.product_name }} </p>
@@ -24,31 +24,17 @@
                                 <div class="number_value">
                                     {{ index+1 }}
                                 </div>
-                                <input type="text" class="form-control mx-2" v-model="single.url">
+                                <input type="text" class="form-control mx-2" v-model="single.url" disabled>
 
-                                <button class="btn" @click="removeValue(value,single.id, index)">
+                                <!-- <button class="btn" @click="removeValue(value,single.id, index)">
                                     <i class="fas fa-trash text-danger"></i>
-                                </button>
+                                </button> -->
                             </div>                
                         </div>
                    </div>
             </div>
 
-            <div class="flex_center">
-                <button class="btn btn-danger pt-2 pb-2 px-4" v-if="isDeleted" @click="deleteOrders=true">تأكيد الحذف</button>
-            </div>
 
-             <!-- refuse order  -->
-                <Dialog v-model:visible="deleteOrders" modal  :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-                    <h5 class="text-center"> هل أنت متأكد من حذف هذه الكميات ؟ </h5>
-
-                   <div class="d-flex  justify-content-center">
-                    <button class="btn btn-danger px-4 pt-2 pb-2" @click="removeProducts"> حذف </button>
-                    <button class="btn btn-secondary px-4 pt-2 pb-2 mx-3" @click="deleteOrders=false"> الغاء </button>
-                   </div>
-
-                    
-                </Dialog>
             <!-- location  -->
             <div class="sinle_ordered mb-3 mt-5">
                     <p class="fw-6 mb-1"> مكان تسليم الشحنه </p>
@@ -59,21 +45,21 @@
 
                             <div class="d-flex w-50 align-items-center mb-3">
                                 <span class="fw-6 mx-2"> المدينة </span>
-                                <select name="" class="form-select " id="" v-model="selectedCity">
+                                <select name="" class="form-select " id="" v-model="selectedCity" disabled>
                                     <option value="" selected hidden disabled> {{city_name}} </option>
                                     <option :value="city.id" v-for="city in cities" :key="city.id"> {{ city.name }} </option>
                                 </select>
                             </div>
                             <div class="d-flex w-50 mx-3 align-items-center mb-3">
                                 <span class="fw-6"> العنوان </span>
-                                <input type="text" class="form-control mx-2" v-model="address">
+                                <input type="text" class="form-control mx-2" v-model="address" disabled>
                             </div>
                         </div>
                         
 
                         <div class="d-flex align-items-center mb-3">
                         <span class="fw-6"> اللوكيشن </span>
-                            <input type="text" class="form-control mx-2" v-model="map_url">
+                            <input type="text" class="form-control mx-2" v-model="map_url" disabled>
                         </div>
 
                     </div>
@@ -81,34 +67,29 @@
 
 
 
-            <div class="admin_delivering d-flex justify-content-between align-items-center">
+            <div class="admin_delivering d-flex justify-content-end align-items-center">
 
-                <div class=" d-flex  align-items-center mb-3">
+                <!-- <div class="position-reltive d-flex  align-items-center mb-3">
                     <div class="d-flex fw-6 mx-2"> 
                         <span>
                             الموصل
                         </span>
                         <i class="fas fa-star-of-life text-danger" style="font-size:10px;"></i> 
                     </div>
-                    <!-- <select name="" class="form-select " id="" v-model="selectedDelegate">
-                        <option value="" selected hidden disabled> اختر الموصل </option>
-                        <option :value="delegate.id" v-for="delegate in delegates" :key="delegate.id"> {{ delegate.name }} </option>
-                    </select> -->
-                    <div class="position-relative selectDeliver">
-                        <select name="" class="form-select " id="" v-model="selectedDelegate" >
+                   <div class="position-relative selectDeliver"> 
+                        <select name="" class="form-select " id="" v-model="selectedDelegate" disabled>
                             <option value="" selected hidden disabled>{{ delegate_name }} </option>
                             <option :value="delegate.id" v-for="delegate in delegates" :key="delegate.id"> {{ delegate.name }} </option>
                         </select>
                         <i class="fa-solid fa-angle-down"></i>
-
-                    </div>
-                </div>
+                   </div>
+                </div> -->
 
                 <div>
-                    <button class="third_btn px-4 btn" @click="$router.push(`/admin/products/${$route.params.id}`)"> السابق </button>
-
-                    <button class="btn main_btn mx-3 px-4 br-20" @click="$router.push(`/admin/complete/${$route.params.id}`)"  @click.prevent="createOrder" :disabled="isDisabled"> 
-                        التالي
+                    <button class="third_btn px-4 btn" @click="$router.push(`/complete/completeProducts/${$route.params.id}`)"> السابق </button>
+                    
+                    <button class="btn main_btn mx-3 px-4 br-20" @click="$router.push(`/complete/completeConfirmOrder/${$route.params.id}`)"  @click.prevent="createOrder" > 
+                       التالي
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <!-- @click="$router.push(`/admin/complete/${$route.params.id}`)" -->
@@ -124,7 +105,6 @@
 import navbar from "@/components/navComp.vue";
 import sidebar from "@/components/sidebarComp.vue";
 import Toast from 'primevue/toast';
-import Dialog from 'primevue/dialog';
 
 import axios from 'axios';
 export default {
@@ -140,17 +120,14 @@ export default {
             city_name : '',
 
             sended_value : [],
+            delegate_name : ''
             
-            delegate_name : '',
-            isDeleted : false,
-            deleteOrders : false
         }
     },
     components:{
         navbar,
         sidebar,
-        Toast,
-        Dialog
+        Toast
     },
     methods:{
         async getInfo(){
@@ -165,13 +142,6 @@ export default {
                 this.address = response.address ;
                 this.map_url = response.map_url ;
                 this.cities = response.cities ;
-                this.delegates = response.delegates ;
-                for( let i = 0 ; i < this.delegates.length ; i++ ){
-                    if( this.delegates[i].status === true ){
-                        this.selectedDelegate = this.delegates[i].id ;
-                        this.delegate_name = this.delegates[i].name ;
-                    }
-                }
 
                 for( let i = 0 ; i < this.cities.length ; i++ ){
                     if( this.cities[i].status === true ){
@@ -179,14 +149,20 @@ export default {
                         this.city_name = this.cities[i].name ;
                     }
                 }
+                this.delegates = res.data.data.delegates ;
+                for( let i = 0 ; i < this.delegates.length ; i++ ){
+                    if( this.delegates[i].status === true ){
+                        this.selectedDelegate = this.delegates[i].id ;
+                        this.delegate_name = this.delegates[i].name ;
+                    }
+                }
                 // this.total_products_amount = response.total_products_amount
             } )
         },
 
-        async  removeProducts(){
+        async  removeValue(index, id,value_index){
             const fd = new FormData();
-            fd.append('values_ids',JSON.stringify(this.deleted_ids) )
-            await axios.post(`admin/orders/delete-values?_method=delete`, fd , {
+            await axios.post(`admin/orders/${id}/delete-value?_method=delete`, fd , {
                 headers:{
                     Authorization : `Bearer ${localStorage.getItem('token')}`
                 }
@@ -195,26 +171,17 @@ export default {
                 if( res.data.key == 'success' ){
                     this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
 
-                    // this.products[index].values.splice(value_index, 1)
+                    this.products[index].values.splice(value_index, 1)
                     // console.log(id)
-                    // this.deleted_ids.push(id);
+                    this.deleted_ids.push(id);
 
                     this.getInfo();
-                    this.deleteOrders = false;
-                    this.isDeleted = false ;
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
 
                 }
             } )
             
-        },
-
-        removeValue(index, id,value_index){
-            this.products[index].values.splice(value_index, 1)
-        //             // console.log(id)
-            this.deleted_ids.push(id);
-            this.isDeleted = true ;
         },
 
 
@@ -264,9 +231,5 @@ export default {
 </script>
 
 <style>
-    .selectDeliver .fa-angle-down{
-        position: absolute;
-        right: 84%;
-        top: 30%;
-    }
+
 </style>

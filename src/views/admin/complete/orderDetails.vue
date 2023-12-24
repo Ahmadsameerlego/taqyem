@@ -69,17 +69,20 @@
 
             <div class="admin_delivering d-flex justify-content-between align-items-center">
 
-                <div class=" d-flex  align-items-center mb-3">
+                <div class="position-reltive d-flex  align-items-center mb-3">
                     <div class="d-flex fw-6 mx-2"> 
                         <span>
                             الموصل
                         </span>
                         <i class="fas fa-star-of-life text-danger" style="font-size:10px;"></i> 
                     </div>
-                    <select name="" class="form-select " id="" v-model="selectedDelegate" disabled>
-                        <option value="" selected hidden disabled>{{ delegate_name }} </option>
-                        <option :value="delegate.id" v-for="delegate in delegates" :key="delegate.id"> {{ delegate.name }} </option>
-                    </select>
+                   <div class="position-relative selectDeliver"> 
+                        <select name="" class="form-select " id="" v-model="selectedDelegate" disabled>
+                            <option value="" selected hidden disabled>{{ delegate_name }} </option>
+                            <option :value="delegate.id" v-for="delegate in delegates" :key="delegate.id"> {{ delegate.name }} </option>
+                        </select>
+                        <i class="fa-solid fa-angle-down"></i>
+                   </div>
                 </div>
 
                 <div>
@@ -95,11 +98,13 @@
         </div>         
     </div>
   </div>
+  <Toast />
 </template>
 
 <script>
 import navbar from "@/components/navComp.vue";
 import sidebar from "@/components/sidebarComp.vue";
+import Toast from 'primevue/toast';
 
 import axios from 'axios';
 export default {
@@ -121,7 +126,8 @@ export default {
     },
     components:{
         navbar,
-        sidebar
+        sidebar,
+        Toast
     },
     methods:{
         async getInfo(){
@@ -154,10 +160,34 @@ export default {
             } )
         },
 
+        // async  removeValue(index, id,value_index){
+        //     const fd = new FormData();
+        //     await axios.post(`admin/orders/${id}/delete-value?_method=delete`, fd , {
+        //         headers:{
+        //             Authorization : `Bearer ${localStorage.getItem('token')}`
+        //         }
+        //     })
+        //     .then( (res)=>{
+        //         if( res.data.key == 'success' ){
+        //             this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
+
+        //             this.products[index].values.splice(value_index, 1)
+        //             // console.log(id)
+        //             this.deleted_ids.push(id);
+
+        //             this.getInfo();
+        //         }else{
+        //             this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
+
+        //         }
+        //     } )
+            
+        // },
+
         removeValue(index, id,value_index){
             this.products[index].values.splice(value_index, 1)
-            // console.log(id)
-            this.deleted_ids.push(id);
+        //             // console.log(id)
+                    this.deleted_ids.push(id);
         },
 
 

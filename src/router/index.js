@@ -39,9 +39,28 @@ import singleRent from '@/views/admin/singleRent.vue';
 import settings from '@/views/admin/settingsView.vue';
 import notification from '@/views/admin/notificationsView.vue';
 
-import rentDeliver from '@/views/admin/rentDeliver.vue'
+import rentDeliver from '@/views/admin/rentDeliver.vue';
+
+import showOrderClient from '@/views/admin/show/clientInfo.vue';
+import showCompleteOrder from '@/views/admin/show/completeProducts.vue';
+import showOrderDetails from '@/views/admin/show/orderDetails.vue'
 
 const routes = [
+  {
+    path : '/showOrderDetails/:id',
+    name : 'showOrderDetails',
+    component : showOrderDetails
+  },
+  {
+    path : '/showCompleteOrder/:id',
+    name : 'showCompleteOrder',
+    component : showCompleteOrder
+  },
+  {
+    path : '/showOrderClient/:id',
+    name : 'showOrderClient',
+    component : showOrderClient
+  },
   {
     path : '/admin/rentDeliver/:id',
     name : 'rentDeliver',

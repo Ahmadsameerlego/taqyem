@@ -83,12 +83,15 @@
                 <input type="text" placeholder="ادخل الاسم" class="form-control pt-2 pb-2" name="name">
             </div>
 
-            <div class="form-group mb-2">
+            <div class="position-relative form-group mb-2">
                 <label for="" class="mb-1">
                      الجوال
                      <i class="fa-solid fa-star-of-life text-danger"></i>
                 </label>
                 <input type="text" placeholder="ادخل الجوال" class="form-control pt-2 pb-2" name="phone">
+                <select name="" id="" class="form-select phoneCountry">
+                    <option value="" selected> +966 </option>
+                </select>
             </div>
 
             <div class="form-group mb-2">
@@ -96,7 +99,7 @@
                      البريد الالكتروني
                      <i class="fa-solid fa-star-of-life text-danger"></i>
                 </label>
-                <input type="email" placeholder="ادخل الالكتروني" class="form-control pt-2 pb-2" name="email">
+                <input type="email" required placeholder="ادخل الالكتروني" class="form-control pt-2 pb-2" name="email">
             </div>
 
             <div class="form-group mb-2">
@@ -176,12 +179,15 @@
                <input type="text" placeholder="ادخل الاسم" class="form-control pt-2 pb-2" name="name" v-model="name">
            </div>
 
-           <div class="form-group mb-2">
+           <div class="position-relative form-group mb-2">
                <label for="" class="mb-1">
                     الجوال
                     <i class="fa-solid fa-star-of-life text-danger"></i>
                </label>
                <input type="text" placeholder="ادخل الجوال" class="form-control pt-2 pb-2" name="phone" v-model="phone">
+               <select name="" id="" class="form-select phoneCountry">
+                    <option value="" selected> +966 </option>
+                </select>
            </div>
 
            <div class="form-group mb-2">
@@ -189,7 +195,7 @@
                     البريد الالكتروني
                     <i class="fa-solid fa-star-of-life text-danger"></i>
                </label>
-               <input type="email" placeholder="ادخل الالكتروني" class="form-control pt-2 pb-2" name="email" v-model="email">
+               <input type="email" required placeholder="ادخل الالكتروني" class="form-control pt-2 pb-2" name="email" v-model="email">
            </div>
 
            <div class="form-group mb-2">
@@ -229,12 +235,15 @@
                <input type="number" placeholder="ادخل رقم الحساب" class="form-control pt-2 pb-2" name="account_num" v-model="account_num">
            </div>
 
-           <div class="form-group mb-2">
+           <div class="position-relative form-group mb-2">
                <label for="" class="mb-1">
                     رقم الايبان
                     <i class="fa-solid fa-star-of-life text-danger"></i>
                </label>
                <input type="number" placeholder="ادخل رقم الايبان" class="form-control pt-2 pb-2" name="iban_num" v-model="iban_num">
+               <span class="iban_type">
+                SA
+               </span>
            </div>
 
            <div class="form-group mb-2">
@@ -556,6 +565,25 @@ export default {
 </script>
 
 <style>
+    .phoneCountry{
+        position: absolute;
+        left: 0;
+        top: 40%;
+        width: 88px !important;
+        height: 60%;
+    }
+    .iban_type{
+        position: absolute;
+        left: 0;
+        top: 42%;
+        height: 39px;
+        border-right: 1px solid #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 19px;
+        font-weight: bold;  
+    }
     .userName{
         color: #0000008F;
     }

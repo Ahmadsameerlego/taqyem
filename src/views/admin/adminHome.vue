@@ -95,7 +95,7 @@
 
                 <div class="col-md-6 mb-2">
                     <p class="fw-bold">
-                        الطلبات الجديدة 
+                        اخر الطلبات 
                         <router-link to="/admin/orders" class="more mx-2">
                             المزيد
                         </router-link>
