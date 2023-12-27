@@ -107,7 +107,7 @@
 
                 <!-- new table  -->
                 <DataTable 
-                    :value="new_products.reverse()" 
+                    :value="new_products" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -153,7 +153,7 @@
 
                 <!-- in progress table  -->
                 <DataTable 
-                    :value="in_products.reverse()" 
+                    :value="in_products" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -192,7 +192,7 @@
 
                  <!-- in deliver table  -->
                 <DataTable 
-                    :value="in_deliver.reverse()" 
+                    :value="in_deliver" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -257,7 +257,7 @@
 
                 <!-- complete table  -->
                 <DataTable 
-                    :value="completes.reverse()" 
+                    :value="completes" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -297,7 +297,7 @@
 
                 <!-- refused table  -->
                 <DataTable 
-                    :value="refuseds.reverse()" 
+                    :value="refuseds" 
                     paginator :rows="5" 
                     :rowsPerPageOptions="[5, 10, 20, 50]"   
                     tableStyle="min-width: 50rem"
@@ -426,7 +426,7 @@ export default {
 
             this.refuse_reason = refuse ;
 
-            console.log(refuse)
+            // console.log(refuse)
         },
         selectButton(button) {
             this.selectedButton = button;  

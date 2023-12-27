@@ -99,7 +99,9 @@
                      البريد الالكتروني
                      <i class="fa-solid fa-star-of-life text-danger"></i>
                 </label>
-                <input type="email" required placeholder="ادخل الالكتروني" class="form-control pt-2 pb-2" name="email">
+                <input type="email" required placeholder="ادخل الالكتروني" class="form-control pt-2 pb-2" v-model="AddUserEmail" name="email">
+                <span class="text-danger" style="font-size:13px;" v-if="isEmailValid"> يجب أن تكون صيغة الايميل صحيحة </span>
+
             </div>
 
             <div class="form-group mb-2">
@@ -196,6 +198,8 @@
                     <i class="fa-solid fa-star-of-life text-danger"></i>
                </label>
                <input type="email" required placeholder="ادخل الالكتروني" class="form-control pt-2 pb-2" name="email" v-model="email">
+               <span class="text-danger" style="font-size:13px;" v-if="isEmailValid"> يجب أن تكون صيغة الايميل صحيحة </span>
+
            </div>
 
            <div class="form-group mb-2">
@@ -339,7 +343,7 @@ export default {
                   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
               },
               addUser : false,
-              disabled : false,
+              disabled : true,
               roleSelected : null,
               roles : [],
               changePassword : false,
@@ -361,7 +365,10 @@ export default {
             bank_name : '',
             iban_num : '',
             account_num : '',
-            account_owner_name : ''
+            account_owner_name : '',
+
+            isEmailValid : true,
+            AddUserEmail : ''
           }
       },
       components:{
@@ -556,6 +563,26 @@ export default {
                 this.disabled = false ;
             } )
         }
+      },
+      watch:{
+        AddUserEmail() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailPattern.test(this.AddUserEmail)) {
+                this.isEmailValid = false;
+            } else {
+                this.isEmailValid = true;
+            }
+        },
+        email() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailPattern.test(this.email)) {
+                this.isEmailValid = false;
+            } else {
+                this.isEmailValid = true;
+            }
+        },
       },
       mounted(){
         this.getProducts();

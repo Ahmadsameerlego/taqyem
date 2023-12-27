@@ -147,6 +147,7 @@ export default {
             const fd = new FormData();
             fd.append('city_id', localStorage.getItem('city_id'));
             fd.append('receiver_name', localStorage.getItem('receiver_name'));
+            fd.append('receiver_email', localStorage.getItem('receiver_email'));
             fd.append('address', localStorage.getItem('address'));
             fd.append('owner_name', localStorage.getItem('owner_name'));
             fd.append('map_url', localStorage.getItem('map_url'));

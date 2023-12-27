@@ -40,6 +40,14 @@
                             </div>
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="" class="mb-1 fw-6"> البريد الالكتروني للمستلم  </label>
+                                <input type="email" class="form-control" disabled name=""  id="" v-model="receiver_email">
+
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-end">
                             <button class="btn main_btn" @click="$router.push(`/complete/completeProducts/${this.$route.params.id}`)" @click.prevent="storeClient" :disabled="isDisabled"> 
                                 التالي
@@ -64,6 +72,7 @@ export default {
             client : '',
             receiver_name : '',
             receiver_phone : '',
+            receiver_email : '',
             categories : [],
             category_id : '',
 
@@ -87,6 +96,7 @@ export default {
                 this.client = response.client ;
                 this.receiver_name = response.receiver_name ;
                 this.receiver_phone = response.receiver_phone ;
+                this.receiver_email = response.receiver_email ;
                 this.categories = response.categories ;
 
                 for( let i = 0 ; i < response.categories.length ; i++ ){
@@ -105,6 +115,7 @@ export default {
             localStorage.setItem('owner_name', this.client);
             localStorage.setItem('receiver_name', this.receiver_name);
             localStorage.setItem('receiver_phone', this.receiver_phone);
+            localStorage.setItem('receiver_email', this.receiver_email);
             localStorage.setItem('category_id', this.category_id);
         }
     },

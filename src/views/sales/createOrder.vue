@@ -61,6 +61,15 @@
                         </div>
                     </div>
 
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label for="" class="mb-1 fw-6"> البريد الالكتروني للمستلم  </label>
+                            <input type="email" class="form-control" name="" id="" v-model="receiver_email">
+                            <span class="text-danger" style="font-size:13px;" v-if="isEmailValid"> يجب أن تكون صيغة الايميل صحيحة </span>
+
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-end">
                         <button class="btn main_btn" @click="$router.push('/sales/newOrder')" @click.prevent="storeClient" :disabled="isDisabled"> 
                             التالي
@@ -85,7 +94,9 @@ export default {
             receiver_name : '',
             receiver_phone : '',
             category_id : '',
-            isPhoneValid : true
+            isPhoneValid : true,
+            isEmailValid : true,
+            receiver_email : ''
         }
     },
     components:{
@@ -99,6 +110,7 @@ export default {
                 !this.owner_name ||
                 !this.receiver_name ||
                  this.isPhoneValid ||
+                 this.isEmailValid ||
                 !this.category_id
             )
         }
@@ -125,6 +137,7 @@ export default {
             localStorage.setItem('receiver_name', this.receiver_name);
             localStorage.setItem('receiver_phone', this.receiver_phone);
             localStorage.setItem('category_id', this.category_id);
+            localStorage.setItem('receiver_email', this.receiver_email);
         }
     },
     watch:{ 
@@ -135,6 +148,15 @@ export default {
             }else{
                 this.isPhoneValid = false ;
             }
+        },
+        receiver_email() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailPattern.test(this.receiver_email)) {
+                this.isEmailValid = false;
+            } else {
+                this.isEmailValid = true;
+            }
         }
     },
     mounted(){
@@ -142,6 +164,7 @@ export default {
 
         this.owner_name = localStorage.getItem('owner_name');
         this.receiver_name = localStorage.getItem('receiver_name');
+        this.receiver_email = localStorage.getItem('receiver_email');
         this.receiver_phone = localStorage.getItem('receiver_phone');
         this.category_id = localStorage.getItem('category_id');
 

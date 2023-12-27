@@ -97,6 +97,7 @@
                 >
                     <Column field="owner_name" header="اسم المنشأة"></Column>
                     <Column field="receiver_phone" header="رقم الجوال"></Column>
+                    <Column field="receiver_email" header="البريد الالكتروني"></Column>
                     <Column field="receiver_name" header="الاسم"></Column>
                     <Column field="created_at" header="تاريخ الشراء"></Column>
                     <Column  header="تواصل">
