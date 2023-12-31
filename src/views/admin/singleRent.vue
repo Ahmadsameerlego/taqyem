@@ -127,7 +127,11 @@
                 >
 
 
-                    <Column field="id" header="رقم الطلب"></Column>
+                    <Column  header="رقم الطلب">
+                        <template #body="slotProps">
+                            {{ slotProps.index+1 }}
+                        </template>
+                    </Column>
                     <Column field="final_total" header="مبلغ التسوية"></Column>
                     <Column field="reward_amount" header="المكافأة"></Column>
                     <Column field="orders_count" header="عدد الطلبات"></Column>
@@ -691,7 +695,7 @@
   import DataTable from 'primevue/datatable';
   import Column from 'primevue/column';
   import { FilterMatchMode } from 'primevue/api';
-  import moment from 'moment';
+//   import moment from 'moment';
 
   import Dialog from 'primevue/dialog';
     import axios from 'axios'
@@ -794,6 +798,9 @@ export default {
             this.reward = data.reward_amount ;
             this.profit = data.total_profit ;
             this.number = data.id ;
+            this.currentDate = data.created_at ;
+            this.cuurentTime = data.created_at_time ;
+
         },
         openSettle(data){
             this.visible = true ;
@@ -804,7 +811,9 @@ export default {
             this.profit = data.total_profit ;
             this.number = data.id ;
             this.pdf_uploaded = data.image
-            this.settle_pay_type = data.pay_type
+            this.settle_pay_type = data.pay_type;
+            this.currentDate = data.created_at ;
+            this.cuurentTime = data.created_at_time ;
         },
         openNotCompleted(data){
             this.sttle_not_completed = true ;
@@ -814,7 +823,10 @@ export default {
             this.profit = data.total_profit ;
             this.number = data.id ;
             this.pdf_uploaded = data.image;
-            this.settle_pay_type = data.pay_type
+            this.settle_pay_type = data.pay_type;
+            this.currentDate = data.created_at ;
+            this.cuurentTime = data.created_at_time ;
+
         },
           selectButton(button) {
               this.selectedButton = button;
@@ -896,8 +908,8 @@ export default {
       mounted(){
         this.deliver = JSON.parse(localStorage.getItem('deliver'));
         this.getdelivers();
-        this.currentDate = moment().format('YY-MM-DD')
-            this.cuurentTime = moment().format('h:mm:ss A');
+        // this.currentDate = moment().format('YY-MM-DD')
+        //     this.cuurentTime = moment().format('h:mm:ss A');
       }  
 }
 </script>

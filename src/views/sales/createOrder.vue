@@ -52,7 +52,7 @@
                         <div class="form-group position-relative">
                             <div class="position-relative">
                                 <label for="" class="mb-1 fw-6"> رقم جوال المستلم  </label>
-                                <input type="number" class="form-control" name="" id="" v-model="receiver_phone" min="9" max="10" >
+                                <input type="tel" class="form-control" name="" id="" v-model="receiver_phone" style="direction: rtl;" >
                                 <select name="" class="number form-control" id="">
                                     <option value="">+996 </option>
                                 </select>
@@ -61,6 +61,7 @@
                         </div>
                     </div>
 
+                    
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label for="" class="mb-1 fw-6"> البريد الالكتروني للمستلم  </label>
@@ -92,7 +93,7 @@ export default {
             cats : [],
             owner_name : '',
             receiver_name : '',
-            receiver_phone : '',
+            receiver_phone : 0,
             category_id : '',
             isPhoneValid : true,
             isEmailValid : true,
@@ -143,11 +144,13 @@ export default {
     watch:{ 
         receiver_phone(){
             const receiverPhoneString = String(this.receiver_phone);
-            if(receiverPhoneString.length < 9 || receiverPhoneString.length > 11 ){
+            if(receiverPhoneString.length < 9 || receiverPhoneString.length > 10 ){
                 this.isPhoneValid = true ;
             }else{
                 this.isPhoneValid = false ;
             }
+
+            console.log(receiverPhoneString.length)
         },
         receiver_email() {
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

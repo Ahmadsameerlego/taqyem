@@ -125,7 +125,11 @@
                 >
 
 
-                    <Column field="id" header="رقم الطلب"></Column>
+                    <Column  header="رقم الطلب">
+                        <template #body="slotProps">
+                            {{ slotProps.index+1 }}
+                        </template>
+                    </Column>
                     <Column field="final_total" header="مبلغ التسوية"></Column>
                     <Column field="orders_count" header="الطلبات"></Column>
                     <Column field="pay_type" header="طريقة التسوية"></Column>
@@ -140,10 +144,10 @@
                         <template #body="slotProps">
 
                             <!-- done  -->
-                            <button class="btn main_btn br-20 px-4 " @click="openSettle(slotProps.data.final_total ,  slotProps.data.id )" v-if="slotProps.data.status=='pending'">
+                            <button class="btn main_btn br-20 px-4 " @click="openSettle(slotProps.data.final_total ,  slotProps.data.id , slotProps.data.pay_type , slotProps.data.created_at , slotProps.data.created_at_time)" v-if="slotProps.data.status=='pending'">
                                     تفاصيل
                             </button>  
-                            <button class="btn main_btn br-20 px-4 " @click="openCompleted(slotProps.data.final_total ,  slotProps.data.id , slotProps.data.image , slotProps.data.pay_type)" v-if="slotProps.data.status=='completed'">
+                            <button class="btn main_btn br-20 px-4 " @click="openCompleted(slotProps.data.final_total ,  slotProps.data.id , slotProps.data.image , slotProps.data.pay_type , slotProps.data.created_at , slotProps.data.created_at_time)" v-if="slotProps.data.status=='completed'">
                                     تفاصيل
                             </button>  
                             <!-- still  -->
@@ -251,12 +255,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type2"  :checked="pay_type_settle='cash'"  name="pay_type2" value="1">
+                                    <input type="radio" v-model="pay_type2"  :checked="pay_type_settle=='cash'"  name="pay_type2" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio" v-model="pay_type2" :checked="pay_type_settle='online'"   name="pay_type2" value="2">
+                                    <input type="radio" v-model="pay_type2" :checked="pay_type_settle=='online'"   name="pay_type2" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -369,12 +373,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" :checked="pay_type_settle='cash'" v-model="pay_type2" name="pay_type2" value="1">
+                                    <input type="radio" :checked="pay_type_settle==='cash'" v-model="pay_type2" name="pay_type2" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio"  :checked="pay_type_settle='online'" v-model="pay_type2" name="pay_type2" value="2">
+                                    <input type="radio"  :checked="pay_type_settle==='online'" v-model="pay_type2" name="pay_type2" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -408,7 +412,7 @@
                             <p class="text-center">الرصيد المتاح</p>
 
                             <div class="position-relative settle_way settle_info2 settle_info3 d-flex">
-                               <input type="number" class="form-control avilable_amount" :value="deliver.final_total" disabled>
+                               <input type="number" class="form-control avilable_amount" :value="deliver.final_total"  disabled>
                                <h6 class="currency">
                                 ريال
                                </h6>
@@ -427,12 +431,12 @@
 
                             <div class="settle_way settle_info2   d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" v-model="pay_type" name="pay_type" value="1">
+                                    <input type="radio" :disabled="isPaid" v-model="pay_type" name="pay_type" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio"  v-model="pay_type" name="pay_type" value="2">
+                                    <input type="radio" :disabled="isPaid"  v-model="pay_type" name="pay_type" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -459,7 +463,7 @@
             </div>
 
             <div class="flex_center mt-4">
-                <button class="btn main_btn px-5" :disabled="addDisabled" @click.prevent="addNewOrder"> حفظ </button>
+                <button class="btn main_btn px-5" :disabled="addDisabled||isPaid" @click.prevent="addNewOrder"> حفظ </button>
             </div>
        </form>
     </Dialog>
@@ -585,7 +589,7 @@
   import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import Toast from 'primevue/toast';
-import moment from 'moment';
+// import moment from 'moment';
 
 
 export default {
@@ -622,7 +626,10 @@ export default {
               pdfUrl: null,
               completed_settle : false,
               pdfUrlGetted : '',
-              pay_type_settle : ''
+              pay_type_settle : '',
+              isPaid : false,
+              isCompleted : false,
+              delegate_id : ''
 
           }
       },
@@ -698,17 +705,23 @@ export default {
                 }
             } )
         },
-        openSettle(amount, number){
+        openSettle(amount, number,type , date , time ){
             this.visible = true ;
             this.amount = amount ;
             this.number = number ;
+            this.pay_type_settle = type
+            this.currentDate = date;
+            this.cuurentTime = time ;
+            console.log(type)
         },
-        openCompleted(amount, number, image, type){
+        openCompleted(amount, number, image, type , date , time){
             this.completed_settle = true ;
             this.amount = amount ;
             this.number = number ;
             this.pdfUrlGetted = image ;
-            this.pay_type_settle = type
+            this.pay_type_settle = type;
+            this.currentDate = date;
+            this.cuurentTime = time ;
 
         },
         // add order 
@@ -717,7 +730,7 @@ export default {
             const fd = new FormData();
 
             fd.append('pay_type', this.pay_type);
-            fd.append('delegate_id', this.deliver.delegate_id);
+            fd.append('delegate_id', this.delegate_id);
 
             await axios.post('admin/store-delegate-profits-transactions', fd , {
                 headers:{
@@ -730,6 +743,7 @@ export default {
                     this.addDisabled = false ;
                     this.addOrder = false ;
                     this.getdelivers();
+                    this.isPaid = true ;
 
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
@@ -745,6 +759,15 @@ export default {
             })
             .then( (res)=>{
                 this.delivers = res.data.data ;
+                for( let i = 0 ; i < res.data.data.length ; i++ ){
+                    // if( res.data.data[i].status == 'completed' ){
+                    //     this.isCompleted = true ;
+                    //     this.deliver.final_total = '0'
+                    // }
+                    this.deliver = res.data.data[0];
+                }
+
+
             } )
         },
           selectButton(button) {
@@ -768,12 +791,12 @@ export default {
           }
       },
       mounted(){
-          this.deliver = JSON.parse(localStorage.getItem('deliver'));
+          this.delegate_id = JSON.parse(localStorage.getItem('deliver')).delegate_id;
 
           this.getdelivers();
 
-          this.currentDate = moment().format('YY-MM-DD')
-            this.cuurentTime = moment().format('h:mm:ss A');
+        //   this.currentDate = moment().format('YY-MM-DD')
+        //     this.cuurentTime = moment().format('h:mm:ss A');
       }  
 }
 </script>

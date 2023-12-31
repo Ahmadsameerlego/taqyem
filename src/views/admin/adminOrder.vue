@@ -127,6 +127,7 @@
                     </Column>
                     
 
+                    <Column field="seller_name" header="المستخدم" ></Column>
                     <Column field="created_at" header="تاريخ الطلب" sortable></Column>
 
 
@@ -172,6 +173,7 @@
                         </template>
                     </Column>
                     
+                    <Column field="seller_name" header="المستخدم" ></Column>
 
                     <Column field="created_at" header="تاريخ الطلب" sortable></Column>
 
@@ -234,6 +236,7 @@
                                                     
                         </template>
                     </Column>
+                    <Column field="seller_name" header="المستخدم" ></Column>
 
                     <Column field="reference_code" header="رمز التسليم"></Column>
 
@@ -276,7 +279,17 @@
                         </template>
                     </Column>
                     
-
+                    <Column field="seller_name" header="المستخدم" ></Column>
+                    <Column  header="وسيلة الدفع">
+                        <template #body="slotProps">
+                            <span v-if="slotProps.data.pay_type=='cash'" style="    margin-right: 34px;">
+                                نقدي
+                            </span>
+                            <span v-if="slotProps.data.pay_type=='online'" style="    margin-right: 34px;">
+                                <img :src="require('@/assets/imgs/Mada-01 1.png')" alt="">
+                            </span>                      
+                        </template>
+                    </Column>
                     <Column field="created_at" header="تاريخ الطلب" sortable></Column>
 
 
@@ -339,6 +352,7 @@
                                                     
                         </template>
                     </Column>
+                    <Column field="seller_name" header="المستخدم" ></Column>
 
                     <Column field="reference_code" header="رمز التسليم"></Column>
 
@@ -474,7 +488,7 @@ export default {
             })
             .then( (res)=>{
                 if( res.data.key === 'success' ){
-                    this.$toast.add({ severity: 'success', summary: 'تم قبول الطلب بنجاح', life: 3000 });
+                    this.$toast.add({ severity: 'success', summary: 'تم حذف الطلب بنجاح', life: 3000 });
                     setTimeout(() => {
                         this.getNew();
                     }, 1000);

@@ -63,7 +63,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-5">
+                <!-- <div class="col-md-4 mb-5">
                     <div class="single_card d-flex align-items-center">
                         <span class="card_icon">
                             <img :src="require('@/assets/imgs/coins 1.png')" alt="">
@@ -74,8 +74,8 @@
                             <span class="card_details"> {{ data.current_month_profit }} ريال </span>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4 mb-5">
+                </div> -->
+                <!-- <div class="col-md-4 mb-5">
                     <div class="single_card d-flex align-items-center">
                         <span class="card_icon">
                             <img :src="require('@/assets/imgs/dollar 1.png')" alt="">
@@ -86,7 +86,7 @@
                             <span class="card_details"> {{ data.today_profit }} ريال </span>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="col-md-4 mb-5">
                     <div class="single_card d-flex align-items-center">
@@ -174,6 +174,7 @@ export default {
 
         localStorage.setItem('owner_name', '');
         localStorage.setItem('receiver_name', '');
+        localStorage.setItem('receiver_email', '');
         localStorage.setItem('receiver_phone', '');
         localStorage.setItem('category_id', '');
         localStorage.setItem('products', []);

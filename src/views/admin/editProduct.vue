@@ -54,6 +54,8 @@
                             <span class="visually-hidden">Loading...</span>
                         </div> 
                     </button>
+
+                    <button class="btn btn-danger pt-2 pb-2 px-5 mx-2" :disabled="deleteDisabled" @click.prevent="deleteProduct"> حذف المنتج </button>
                 </div>
             </form>
         </div>
@@ -75,7 +77,8 @@ export default {
             qty : '',
             image : '',
             description : '',
-            disabled : false
+            disabled : false,
+            deleteDisabled : false
         }
     },
     components:{
@@ -88,6 +91,28 @@ export default {
             const file = e.target.files[0];
             this.$refs.profile.src = URL.createObjectURL(file);
 
+        },
+
+        async deleteProduct(){
+            const fd = new FormData();
+            this.deleteDisabled = true ;
+            await axios.post(`admin/products/${this.$route.params.id}?_method=delete` , fd  , {
+                headers : {
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                if( res.data.key === 'success' ){
+                    this.$toast.add({ severity: 'success', summary: res.data.msg, life: 3000 });
+                    setTimeout(() => {
+                        this.$router.push('/admin/products')
+                    }, 1000);
+                }else{
+                    this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
+
+                }
+                this.deleteDisabled = false ;
+            } ) 
         },
 
         async getProduct(){

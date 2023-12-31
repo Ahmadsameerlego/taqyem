@@ -227,6 +227,7 @@ export default {
         this.getOrders();
         localStorage.setItem('owner_name', '');
         localStorage.setItem('receiver_name', '');
+        localStorage.setItem('receiver_email', '');
         localStorage.setItem('receiver_phone', '');
         localStorage.setItem('category_id', '');
         localStorage.setItem('proudcts', []);

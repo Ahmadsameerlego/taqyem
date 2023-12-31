@@ -99,7 +99,7 @@
 <script>
 import navbar from "@/components/navComp.vue";
 import sidebar from "@/components/sidebarComp.vue";
-import moment from 'moment';
+// import moment from 'moment';
 import Toast from 'primevue/toast';
 import Dialog from 'primevue/dialog';
 
@@ -142,6 +142,8 @@ export default {
                 this.owner_name = response.client ;
                 this.receiver_phone = response.receiver_phone ;
                 this.order_num = response.order_num ;
+                this.currentDay = response.created_at ;
+                this.currentTime = response.created_at_time ;
 
 
 
@@ -236,8 +238,8 @@ export default {
         this.getDelegates();
 
 
-        this.currentDay = moment().format('YY-MM-DD')
-        this.currentTime = moment().format('h:mm:ss A');
+        // this.currentDay = moment().format('YY-MM-DD')
+        // this.currentTime = moment().format('h:mm:ss A');
 
         // this.owner_name = localStorage.getItem('owner_name');
         // this.address = localStorage.getItem('address');

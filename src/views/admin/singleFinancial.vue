@@ -257,6 +257,10 @@
                         <iframe :src="pdfUrl" width="100%" height="400px"></iframe>
                         </div>
                     </div>
+
+                    <div v-for="(settlement_image, index) in settle_data.settlement_image" :key="index">
+                        <a :href="settlement_image" target="_blank" class="d-flex text-center flex_center" style="text-decoration:underline">افتح التسوية رقم {{ index+1 }}</a>
+                    </div>
                 </div>
                 
             </div>
@@ -327,7 +331,7 @@
             </div>
 
             <div class="flex_center mt-4">
-                <button class="btn main_btn px-5" :disabled="disabled" @click.prevent="sendSettle"> حفظ </button>
+                <button class="btn main_btn px-5" disabled @click.prevent="sendSettle"> حفظ </button>
             </div>
        </form>
     </Dialog>
