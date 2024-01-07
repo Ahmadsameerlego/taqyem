@@ -162,7 +162,7 @@
         </form>
         
         <div class="d-flex justify-content-center align-items-center mt-3">
-            <button class="btn main_btn  w-50 px-4" @click.prevent="addUserRole()" :disabled="disabled"> اضافة </button>
+            <button class="btn main_btn  w-50 px-4" @click.prevent="addUserRole()" > اضافة </button>
             <button class="btn sec_btn mx-2 w-50  px-4" @click.prevent="addUser=false"> الغاء </button>
         </div>
     </Dialog>

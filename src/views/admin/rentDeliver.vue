@@ -373,12 +373,12 @@
 
                             <div class="settle_way d-flex">
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" :checked="pay_type_settle==='cash'" v-model="pay_type2" name="pay_type2" value="1">
+                                    <input type="radio" :checked="pay_type_settle==='cash'" disabled v-model="pay_type2" name="pay_type2" value="1">
                                     <label for="" class="mx-3"> نقدى </label>
                                 </div>
 
                                 <div class="d-flex align-items-center mx-5">
-                                    <input type="radio"  :checked="pay_type_settle==='online'" v-model="pay_type2" name="pay_type2" value="2">
+                                    <input type="radio"  :checked="pay_type_settle==='online'" disabled v-model="pay_type2" name="pay_type2" value="2">
                                     <label for="" class="mx-3"> تحويل </label>
                                 </div>
                             </div>
@@ -412,7 +412,7 @@
                             <p class="text-center">الرصيد المتاح</p>
 
                             <div class="position-relative settle_way settle_info2 settle_info3 d-flex">
-                               <input type="number" class="form-control avilable_amount" :value="deliver.final_total"  disabled>
+                               <input type="number" class="form-control avilable_amount" :value="deliver_profits"  disabled>
                                <h6 class="currency">
                                 ريال
                                </h6>
@@ -629,7 +629,8 @@ export default {
               pay_type_settle : '',
               isPaid : false,
               isCompleted : false,
-              delegate_id : ''
+              delegate_id : '',
+              deliver_profits : ''
 
           }
       },
@@ -743,6 +744,7 @@ export default {
                     this.addDisabled = false ;
                     this.addOrder = false ;
                     this.getdelivers();
+                    this.getDelegateInfo();
                     this.isPaid = true ;
 
                 }else{
@@ -766,8 +768,17 @@ export default {
                     // }
                     this.deliver = res.data.data[0];
                 }
-
-
+            } )
+        },
+        async getDelegateInfo(){
+            await axios.get(`admin/delegate-profits-transactions/get-profits/${this.$route.params.id}`, {
+                headers:{
+                    Authorization : `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then( (res)=>{
+                    this.deliver_profits = res.data.data.profits;
+                
             } )
         },
           selectButton(button) {
@@ -794,6 +805,7 @@ export default {
           this.delegate_id = JSON.parse(localStorage.getItem('deliver')).delegate_id;
 
           this.getdelivers();
+          this.getDelegateInfo();
 
         //   this.currentDate = moment().format('YY-MM-DD')
         //     this.cuurentTime = moment().format('h:mm:ss A');

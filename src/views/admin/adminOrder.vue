@@ -290,6 +290,7 @@
                             </span>                      
                         </template>
                     </Column>
+                    <Column field="otp_code" header="رمز التسليم"></Column>
                     <Column field="created_at" header="تاريخ الطلب" sortable></Column>
 
 

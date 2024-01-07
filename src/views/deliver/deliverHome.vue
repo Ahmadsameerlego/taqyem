@@ -67,7 +67,7 @@
                 <Column header="">
                     <template #body="slotProps">
                         <div class="d-flex justify-content-center align-items-center">
-                            <button class="btn main_btn br-20 px-4" @click="openAccept(slotProps.data.total_products_amount , slotProps.data.reference_code, slotProps.data.id)">تسليم </button>
+                            <button class="btn main_btn br-20 px-4" @click="openAccept(slotProps.data.total_products_amount , slotProps.data.id)">تسليم </button>
                             <button class="btn btn-danger mx-3 br-20 px-4" @click="openRefuse(slotProps.data.id)">رفض </button>
                         </div>    
                     </template>
@@ -246,10 +246,10 @@ export default {
                 this.still = false ;
             }
         },
-        openAccept(price, code, id){
+        openAccept(price, id){
             this.accept         = true ;
             this.price          = price ;
-            this.reference_code      = code ;
+            // this.reference_code      = code ;
             this.order_in_id    = id ;
         },
         async getCompleted(){
@@ -312,7 +312,7 @@ export default {
             this.accept_disabled = true ;
             fd.append('pay_type', this.pay_type) ;
             fd.append('reference_code', this.reference_code) ;
-            fd.append('otp_code', this.otp) ;
+            fd.append('otp_code', this.otp_code) ;
             await axios.post(`delegate/orders/${this.order_in_id}/finish`, fd , {
                 headers:{
                     Authorization : `Bearer ${localStorage.getItem('token')}`
