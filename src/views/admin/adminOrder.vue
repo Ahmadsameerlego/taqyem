@@ -209,7 +209,7 @@
                         <template #body="slotProps">
 
                             <div class="d-flex justify-content-center align-items-center">
-                                <a :href="'tel:'+slotProps.data.receiver_phone">
+                                <a :href="'tel:0'+slotProps.data.receiver_phone">
                                     <span class="contact_icon">
                                         <i class="fa-solid fa-phone-volume"></i>
                                     </span>
@@ -326,7 +326,7 @@
                         <template #body="slotProps">
 
                             <div class="d-flex justify-content-center align-items-center">
-                                <a :href="'tel:'+slotProps.data.receiver_phone">
+                                <a :href="'tel:0'+slotProps.data.receiver_phone">
                                     <span class="contact_icon">
                                         <i class="fa-solid fa-phone-volume"></i>
                                     </span>

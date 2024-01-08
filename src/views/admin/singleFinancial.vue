@@ -175,11 +175,11 @@
                                     تفاصيل
                             </button>  
                             <!-- still  -->
-                            <button class="btn btn_still br-20 px-4 " @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount , slotProps.data.remind_cash ,slotProps.data.remind_online , slotProps.data.remind_returns  , slotProps.data)" v-if="slotProps.data.status=='not_completed'">
+                            <button class="btn btn_still br-20 px-4 " @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount , slotProps.data.remind_cash ,slotProps.data.remind_online , slotProps.data.remind_returns  ,slotProps.data ,  slotProps.data.returns_count)" v-if="slotProps.data.status=='not_completed'">
                                     تفاصيل
                             </button>     
                             <!-- not          -->
-                            <button class="btn br-20 px-4 btn-danger" @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount , slotProps.data.remind_cash ,slotProps.data.remind_online , slotProps.data.remind_returns , slotProps.data)" v-if="slotProps.data.status=='zero'">
+                            <button class="btn br-20 px-4 btn-danger" @click="openSettle(slotProps.data.delegate_id , slotProps.data.date , slotProps.data.settlement_paid_amount , slotProps.data.remind_cash ,slotProps.data.remind_online , slotProps.data.remind_returns  ,slotProps.data ,  slotProps.data.returns_count)" v-if="slotProps.data.status=='zero'">
                                     تسوية
                             </button>
                             <span v-if="false">{{slotProps.data.image}}</span>
@@ -224,7 +224,11 @@
                 <div class="col-md-12 mb-2">
                     <div class="form-group">
                         <label for=""> المسترجع </label>
-                        <input type="number" class="form-control" v-model="settle_data.returns_count" >
+                        <input type="number" class="form-control" v-model="remind_returns" >
+
+                        <span class="mt-2">
+                            متبقي {{ remind_back }} 
+                        </span>
                     </div>
                 </div>
                 <div class="col-md-12 mb-3">
@@ -294,6 +298,9 @@
                     <div class="form-group">
                         <label for=""> المسترجع </label>
                         <input type="number" class="form-control" v-model="settle_data.returns_count" disabled>
+                        <span class="mt-2">
+                            متبقي 0
+                        </span>
                     </div>
                 </div>
                 <div class="col-md-12 mb-3">
@@ -395,6 +402,10 @@ export default {
             total_online : '',
             pdfUrl: null,
 
+            remind_back : 0,
+            remind_returns : '',
+            new_returns_count : 0
+
             //   r
           }
       },
@@ -402,6 +413,12 @@ export default {
       watch:{
         paid_amount(){
             this.remind = this.amount - this.paid_amount
+        },
+        remind_returns(){
+            // console.log(this.remind_back);
+            // console.log(this.new_returns_count);
+            // console.log(this.remind_returns, 'retrue');
+            this.remind_back = this.new_returns_count - this.remind_returns
         }
       },
 
@@ -411,7 +428,7 @@ export default {
             const fd = new FormData(this.$refs.settleForm);
             fd.append('cash_amount', this.paid_amount);
             fd.append('online_amount', this.total_online);
-            fd.append('returns_count', this.settle_data.returns_count);
+            fd.append('returns_count', this.remind_returns);
             fd.append('notes', this.notes);
             fd.append('delegate_id', this.delegate_id);
             fd.append('date', moment(this.date_sended).format('YY-MM-DD'));
@@ -438,7 +455,7 @@ export default {
                 }
             } )
         },
-        openSettle(id  , date , settlement_paid_amount , total_cash , total_debit , remind_returns  , settle_date){
+        openSettle(id  , date , settlement_paid_amount , total_cash , total_debit , remind_returns  , settle_date , returns_count){
             this.visible = true ;
             this.delegate_id = id ;
             this.amount = total_cash;
@@ -448,7 +465,7 @@ export default {
 
 
             console.log(settlement_paid_amount)
-            console.log(remind_returns)
+            console.log(returns_count)
             this.paid_amount = total_cash ;
 
             this.total_online = total_debit ;
@@ -461,7 +478,8 @@ export default {
             this.settle_data = settle_date ;
             // console.log(this.remind_returns)
             
-
+            this.remind_returns = remind_returns ;
+            this.new_returns_count = remind_returns ;
 
 
         },

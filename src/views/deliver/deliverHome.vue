@@ -38,7 +38,7 @@
                     <template #body="slotProps">
 
                         <div class="d-flex justify-content-center align-items-center">
-                            <a :href="'tel:'+slotProps.data.receiver_phone">
+                            <a :href="'tel:0'+slotProps.data.receiver_phone">
                                 <span class="contact_icon">
                                     <i class="fa-solid fa-phone-volume"></i>
                                 </span>
@@ -298,7 +298,7 @@ export default {
                         // this.selectButton = 'sales';
                     }, 1000);
                     this.getCompleted();
-                    // this.this.getInDelelivery();
+                    this.getInDelelivery();
 
                 }else{
                     this.$toast.add({ severity: 'error', summary: res.data.msg, life: 3000 });
