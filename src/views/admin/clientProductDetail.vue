@@ -131,6 +131,7 @@ export default {
     data(){
         return{
             products : [],
+            sended_products : [],
             address : '',
             map_url : '',
             deleted_ids : [],
@@ -161,7 +162,8 @@ export default {
             })
             .then( (res)=>{
                 const response = res.data.data ;
-                this.products = response.items ;
+                this.products = JSON.parse(JSON.stringify(response.items)); // Deep copy
+                this.sended_products = JSON.parse(JSON.stringify(response.items)); // Deep copy
                 this.address = response.address ;
                 this.map_url = response.map_url ;
                 this.cities = response.cities ;
@@ -212,9 +214,11 @@ export default {
 
         removeValue(index, id,value_index){
             this.products[index].values.splice(value_index, 1)
-        //             // console.log(id)
             this.deleted_ids.push(id);
             this.isDeleted = true ;
+
+            console.log(this.products)
+            console.log(this.sended_products)
         },
 
 
@@ -226,10 +230,11 @@ export default {
         // },
 
         createOrder(){
-            for( let i = 0 ; i < this.products.length ; i++ ){
+            console.log(this.sended_products)
+            for( let i = 0 ; i < this.sended_products.length ; i++ ){
                 this.sended_value.push({
-                    product_id : this.products[i].product_id ,
-                    items : this.products[i].values 
+                    product_id : this.sended_products[i].product_id ,
+                    items : this.sended_products[i].values 
                 })
             }
 
